@@ -1,86 +1,61 @@
 ---
-title: 'Quickstart'
-description: 'Start building awesome documentation in under 5 minutes'
+title: 'Local Dev Setup'
+description: 'Learn how to locally setup Letraz repositories for development purposes. This guide will help you set up the frontend, backend and utility repositories. And also as an added bonus the documentation repository and the admin panel.'
 ---
 
-## Setup your development
+<img
+    className="rounded-lg"
+    src="/images/dev-setup.png"
+    alt="Hero Light"
+/>
 
-Learn how to update your docs locally and deploy them to the public.
+### Main repositories
 
-### Edit and preview
+For development purposes, you need to set up the following repositories in your local system. The repositories are divided into three main repositories and two additional repositories. The main repositories are the core repositories of Letraz and absolutely required to self-host Letraz if needed.
 
-<AccordionGroup>
-  <Accordion icon="github" title="Clone your docs locally">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Preview changes">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally. 1. Install the
-    [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-    documentation changes locally with this command: ``` npm i -g mintlify ```
-    2. Run the following command at the root of your documentation (where
-    `mint.json` is): ``` mintlify dev ```
-  </Accordion>
-</AccordionGroup>
+<Tabs>
+    <Tab title="letraz-client (Next.JS)">
+        1. Clone the repository in your local system [letraz-client](https://github.com/pingSubhajit/letraz) by running `git clone https://github.com/pingSubhajit/letraz.git`
+        2. Create a .env.local file and add the provided environment variables in that file. If you are not part of the core team then check the .env.example files and obtain the environment variables from your side.
+        3. Ensure that node.js of version 20.x.x or above is installed in your system along with the corresponding npm. Currently we're on node.js version 22.x.x.
+        4. Make sure you have bun package manger installed in your system. If not, install it using `npm install -g bun`.
+        5. Run `bun install` in your project directory to install the dependencies.
+        6. Run `bun run dev` to run the project development server.
+        7. Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to view the project.
+    </Tab>
+    <Tab title="letraz-server (django)">
+        1. Install uv in your system. See uv's official [docs](https://github.com/astral-sh/uv) for installation instructions.
+        2. Clone the repository in your local system [letraz-server](https://github.com/LetrazApp/letraz-server) by running `git clone https://github.com/LetrazApp/letraz-server.git`
+        3. Create a .env file and add the provided environment variables in that file. If you are not part of the core team then check the .env.example files and obtain the environment variables from your side.
+        4. Ensure that Python of version 3.12.x or above is installed in your system.
+        5. Run `uv venv` in your project directory to create a virtual environment.
+        6. Activate the venv in your terminal using `source .venv/bin/activate` in Unix/MacOS or `.venv\Scripts\activate` in Windows.
+        7. Run `uv sync` in your terminal to install the dependencies.
+        8. Run `python manage.py makemigrations` to create the DB migrations file and then `python manage.py` migrate to apply the DB migrations.
+        9. Run `python manage.py createsuperuser` and follow the prompt to create a local admin user.
+        10. Run `python manage.py runserver` to run the project development server.
+        11. Open your browser and navigate to [http://localhost:8000](http://localhost:8000) to view the project. You should see a 404 page as nothing is mounted on the `/` route by design.
+        12. Access the admin panel by navigating to [http://localhost:8000/admin](http://localhost:8000/admin) and login with the superuser credentials to see and edit the data in the DB.
+    </Tab>
+    <Tab title="letraz-utils (django + Celery)">
+        The django-utils repository is currently heavily under construction and is not ready for it's dev setup guide being published. Please check back later.
+    </Tab>
+</Tabs>
 
-### Deploy your changes
 
-<AccordionGroup>
+### Additional repositories
 
-<Accordion icon="message-bot" title="Install our Github app">
-  Our Github app automatically deploys your changes to your docs site, so you
-  don't need to manage deployments yourself. You can find the link to install on
-  your [dashboard](https://dashboard.mintlify.com). Once the bot has been
-  successfully installed, there should be a check mark next to the commit hash
-  of the repo.
-</Accordion>
-<Accordion icon="rocket" title="Push your changes">
-  [Commit and push your changes to
-  Git](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push)
-  for your changes to update in your docs site. If you push and don't see that
-  the Github app successfully deployed your changes, you can also manually
-  update your docs through our [dashboard](https://dashboard.mintlify.com).
-</Accordion>
+The additional repositories are not core to the functioning of Letraz but are required for the development and documentation purposes. The repositories are the documentation repository and the admin panel repository.
 
-</AccordionGroup>
-
-## Update your docs
-
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
-
-<CardGroup>
-
-<Card title="Style Your Docs" icon="paintbrush" href="/settings/global">
-  Add flair to your docs with personalized branding.
-</Card>
-
-<Card
-  title="Add API Endpoints"
-  icon="square-code"
-  href="/api-playground/configuration"
->
-  Implement your OpenAPI spec and enable API user interaction.
-</Card>
-
-<Card
-  title="Integrate Analytics"
-  icon="chart-mixed"
-  href="/analytics/supported-integrations"
->
-  Draw insights from user interactions with your documentation.
-</Card>
-
-<Card
-  title="Host on a Custom Domain"
-  icon="browser"
-  href="/settings/custom-domain/subdomain"
->
-  Keep your docs on your own website's subdomain.
-</Card>
-
-</CardGroup>
+<Tabs>
+    <Tab title="Admin Panel (Next.JS)">
+        The admin panel is currently heavily under construction and is not ready for it's dev setup guide being published. Please check back later.
+    </Tab>
+    <Tab title="letraz-internal-docs (Mintlify)">
+        1. Make sure you have node.js of version 20.x.x or above installed in your system along with the corresponding npm. Currently we're on node.js version 22.x.x.
+        2. Install Mintlify CLI in your system using `npm install -g mintlify`.
+        3. Clone the repository in your local system [letraz-internal-docs](https://github.com/LetrazApp/letraz-internal-docs) by running `git clone https://github.com/LetrazApp/letraz-internal-docs.git`.
+        4. Run `mintlify dev` in your project directory to run the project development server.
+        5. Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to view the project.
+    </Tab>
+</Tabs>
