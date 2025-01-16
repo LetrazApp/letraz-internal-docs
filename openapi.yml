@@ -1198,7 +1198,7 @@ components:
         - id
         - waiting_number
 servers:
-  - url: http://localhost:8000/api/v1
+  - url: https://api.letraz.app/api/v1
     description: Local Development Server
 tags:
   - name: Core APIs
