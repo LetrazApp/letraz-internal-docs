@@ -7,45 +7,39 @@
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#F4421F",
+    "light": "#F4421F",
+    "dark": "#F4421F",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#F4421F",
+      "to": "#FFC657"
     }
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "https://discord.gg/letraz"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "Admin Dashboard",
+    "url": "https://admin.letraz.app"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "name": "Admin Panel",
+      "icon": "gauge-high",
+      "url": "https://admin.letraz.app"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "name": "Live Frontend",
+      "icon": "globe",
+      "url": "https://letraz.app"
     },
     {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "Live Backend",
+      "icon": "server",
+      "url": "https://api.letraz.app"
     }
   ],
   "navigation": [
@@ -58,28 +52,53 @@
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Core APIs",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "api-reference/core-apis/get-server-health-status",
+        "api-reference/core-apis/get-sample-error",
+        "api-reference/core-apis/get-sample-error-bulk-operations"
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "Waitlist",
       "pages": [
-        "api-reference/introduction"
+        "api-reference/waitlist/get-all-waitlist-entries",
+        "api-reference/waitlist/add-a-new-waitlist-entry"
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "User info",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/user-info/get-user-info",
+        "api-reference/user-info/add-a-new-user-info"
+      ]
+    },
+    {
+      "group": "Resume",
+      "pages": [
+        "api-reference/resume-object/get-one-or-all-resume"
+      ]
+    },
+    {
+      "group": "Education",
+      "pages": [
+        "api-reference/education-object/get-all-educations",
+        "api-reference/education-object/add-a-new-education",
+        "api-reference/education-object/delete-an-education"
+      ]
+    },
+    {
+      "group": "Experience",
+      "pages": [
+        "api-reference/experience-object/get-all-experiences",
+        "api-reference/experience-object/add-a-new-experience",
+        "api-reference/experience-object/delete-an-experience"
+      ]
+    },
+    {
+      "group": "Job",
+      "pages": [
+        "api-reference/job-object/get-job-by-job-id"
       ]
     }
   ],
