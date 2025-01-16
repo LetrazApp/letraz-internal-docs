@@ -1,0 +1,105 @@
+---
+title: 'Guidelines'
+description: "Guidelines for contributing to Letraz repositories. This document outlines the best practices and guidelines to be followed while contributing to the Letraz repositories. These guidelines are aimed primarily at the core team of Letraz as they have the required access in the Letraz's ecosystem to follow the guidelines mentioned here but these can be followed by anyone looking to contribute to the Letraz repositories."
+---
+
+<img
+    className="rounded-lg"
+    src="/images/guidelines.png"
+    alt="Hero Light"
+/>
+
+### Core guidelines
+
+- Always start with an issue. Create the issue in the Linear if an issue regarding the feature/bug doesn't exist. While creating an issue, use the standard issue format that consists of a brief description of what needs to be done, bullet-point representation of the success criteria and bullet-point representation of the acceptance criteria.
+- Mark the issue as in-progress when starting to work on the said issue, keep any discussions to that issue in the threads section under that issue itself.
+- Use a consistent file and folder naming convention. Read through the established structure the project follows, try to repurpose the old code as there .
+- Maintain a well documented code and explain with comments where necessary. Although don't over-comment stuff. Try to write code in such a way that mostly commenting isn't required.
+- Try to avoid technical debt as much as possible. Document technical debt (if any) clearly in the threads section beneath the issue and prioritize on reducing it systematically.
+- Use bun as the package manager for the project. Do not use npm, pnpm or yarn. Avoid unnecessary dependencies and regularly purge dependencies that are no longer being used.
+- Please notify the team before introducing a new dependency (ShadCN components doesn't count, add them anytime).
+- No typescript errors should be present in the code for any PR. Also don't ts-ignore any TS errors until absolutely necessary. Avoid using any type as much as possible.
+- Double check lint errors and warnings before committing. No errors and ideally no warnings should be there in the committed code. Run bun run lint:fix as necessary.
+- Do not directly commit into the main branch. Always commit into the corresponding branch of the Linear issue.
+- Make atomic commits with clear and concise commit messages precisely communicating the changes that were made in the said commit.
+- While opening a pull request, follow the PR description format. Include the link to the Linear issue, provide a description, bullet-point representation of the changes made in the PR and a closing note. Ask for review from at least two team members when opening the PR.
+
+
+### Standard formats and templates
+
+These are the standard formats and templates that are to be followed while creating issues, pull requests and other forms of communication in the Letraz repositories.
+
+#### Issue template
+
+A standard issue template that is to be followed while creating issues in the Linear. This template consists of a brief description of the issue, bullet-point representation of the success criteria, bullet-point representation of the acceptance criteria and any additional notes that might be useful for the team to know.
+
+**Name:** [Issue type]: [Issue name] <br/>
+**Issue type:** [feat/bug/impr/docs/core/chore/style/logic]
+
+```markdown
+A short description of what the issue is about and how it affects the project.
+
+**Success Criteria:**
+- [ ] Bullet-point representation of the success criteria.
+- [ ] Success criteria should be measurable and clearly defined.
+- [ ] These are the expected outcomes after the issue is resolved.
+
+**Acceptance Criteria:**
+- [ ] Bullet-point representation of the acceptance criteria.
+- [ ] Acceptance criteria should be specific and clearly defined.
+- [ ] These are the individual and more specific changes and tasks that needs to be performed.
+
+**Additional Notes:** (Optional)
+- [ ] Any additional notes that is worth considering.
+- [ ] These are the additional information that might be useful for the team to know.
+
+A conclusion note about the issue and how it affects the project and why it is important to resolve it.
+```
+
+#### Commit message template
+
+A standard commit message template that is to be followed while committing changes in the Letraz repositories. This template consists of a brief one line summary of the changes made in the commit.
+
+```markdown
+[Change type (feat/fix/docs/chore/style]: [Commit message in present indefinite tense]
+```
+
+For more information on how to write a good commit message, refer to the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) documentation.
+
+#### Pull Request template
+
+A standard pull request template that is to be followed while creating pull requests in the Linear. This template consists of link to the Linear issue, a brief description of the PR, bullet-point representation of the changes made in the PR and a closing note.
+
+**Name:** [Linear issue number] | [Issue type]: [PR name] <br/>
+**Issue type:** [feat/bug/impr/docs/core/chore/style/logic]
+
+```markdown
+### Issue:
+[Linear issue name as is](Linear issue link)
+
+### Description:
+A brief description of what the PR is about and how it affects the project.
+
+### Changes Made:
+- [ ] Bullet-point representation of the changes made in the PR.
+- [ ] Changes should be specific and clearly defined.
+- [ ] These are the individual and more specific changes that were made in the PR.
+
+### Closing Note:
+A conclusion note about the PR and how it affects the project and why it is important to merge it.
+```
+
+#### PR Review template
+A standard PR review template that is to be followed while reviewing pull requests in the Linear. This template consists of a observation of the PR, any requested changes if applicable and a remark if applicable clearly stating the recommendation.
+
+```markdown
+**Observation:** A brief observation of the PR and how it affects the project.
+
+**Requested Changes:**
+- [ ] Bullet-point representation of the requested changes.
+- [ ] Changes should be specific and clearly defined.
+
+**Remark:** (Optional) A remark about whether the PR is ready to be merged or not.
+```
+
+Along with mentioning the requested changes in the review, also consider adding the changes in the line-by-line code review section of the PR. This will help the author of the PR to understand the changes that are requested and make the necessary changes accordingly. Consider adding additional context to the requested changes if necessary.

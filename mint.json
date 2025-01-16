@@ -47,8 +47,8 @@
       "group": "Get Started",
       "pages": [
         "introduction",
-        "quickstart",
-        "development"
+        "local-dev-setup",
+        "guidelines"
       ]
     },
     {
