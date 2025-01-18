@@ -52,53 +52,58 @@
       ]
     },
     {
-      "group": "Core APIs",
+      "group": "API References",
       "pages": [
-        "api-reference/core-apis/get-server-health-status",
-        "api-reference/core-apis/get-sample-error",
-        "api-reference/core-apis/get-sample-error-bulk-operations"
-      ]
-    },
-    {
-      "group": "Waitlist",
-      "pages": [
-        "api-reference/waitlist/get-all-waitlist-entries",
-        "api-reference/waitlist/add-a-new-waitlist-entry"
-      ]
-    },
-    {
-      "group": "User info",
-      "pages": [
-        "api-reference/user-info/get-user-info",
-        "api-reference/user-info/add-a-new-user-info"
-      ]
-    },
-    {
-      "group": "Resume",
-      "pages": [
-        "api-reference/resume-object/get-one-or-all-resume"
-      ]
-    },
-    {
-      "group": "Education",
-      "pages": [
-        "api-reference/education-object/get-all-educations",
-        "api-reference/education-object/add-a-new-education",
-        "api-reference/education-object/delete-an-education"
-      ]
-    },
-    {
-      "group": "Experience",
-      "pages": [
-        "api-reference/experience-object/get-all-experiences",
-        "api-reference/experience-object/add-a-new-experience",
-        "api-reference/experience-object/delete-an-experience"
-      ]
-    },
-    {
-      "group": "Job",
-      "pages": [
-        "api-reference/job-object/get-job-by-job-id"
+        {
+          "group": "Core APIs",
+          "pages": [
+            "api-reference/core-apis/get-server-health-status",
+            "api-reference/core-apis/get-sample-error",
+            "api-reference/core-apis/get-sample-error-bulk-operations"
+          ]
+        },
+        {
+          "group": "Waitlist",
+          "pages": [
+            "api-reference/waitlist/get-all-waitlist-entries",
+            "api-reference/waitlist/add-a-new-waitlist-entry"
+          ]
+        },
+        {
+          "group": "User profile info",
+          "pages": [
+            "api-reference/user-info/get-user-info",
+            "api-reference/user-info/add-a-new-user-info"
+          ]
+        },
+        {
+          "group": "Resume object",
+          "pages": [
+            "api-reference/resume-object/get-one-or-all-resume"
+          ]
+        },
+        {
+          "group": "Education",
+          "pages": [
+            "api-reference/education-object/get-all-educations",
+            "api-reference/education-object/add-a-new-education",
+            "api-reference/education-object/delete-an-education"
+          ]
+        },
+        {
+          "group": "Experience",
+          "pages": [
+            "api-reference/experience-object/get-all-experiences",
+            "api-reference/experience-object/add-a-new-experience",
+            "api-reference/experience-object/delete-an-experience"
+          ]
+        },
+        {
+          "group": "Job",
+          "pages": [
+            "api-reference/job-object/get-job-by-job-id"
+          ]
+        }
       ]
     }
   ],
