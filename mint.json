@@ -45,19 +45,20 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": [
-        "introduction",
-        "local-dev-setup",
-        "guidelines"
-      ]
+      "pages": ["introduction", "local-dev-setup", "guidelines"]
     },
     {
       "group": "Core APIs",
       "pages": [
+        "api-reference/core-apis/api-fetching-architecture",
         "api-reference/core-apis/get-server-health-status",
         "api-reference/core-apis/get-sample-error",
         "api-reference/core-apis/get-sample-error-bulk-operations"
       ]
+    },
+    {
+      "group": "Architecture",
+      "pages": ["architecture/api-fetching-architecture"]
     },
     {
       "group": "Waitlist",
@@ -75,9 +76,7 @@
     },
     {
       "group": "Resume",
-      "pages": [
-        "api-reference/resume-object/get-one-or-all-resume"
-      ]
+      "pages": ["api-reference/resume-object/get-one-or-all-resume"]
     },
     {
       "group": "Education",
@@ -97,9 +96,7 @@
     },
     {
       "group": "Job",
-      "pages": [
-        "api-reference/job-object/get-job-by-job-id"
-      ]
+      "pages": ["api-reference/job-object/get-job-by-job-id"]
     }
   ],
   "footerSocials": {
