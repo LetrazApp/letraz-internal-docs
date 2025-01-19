@@ -48,16 +48,16 @@
       "pages": ["introduction", "local-dev-setup", "guidelines"]
     },
     {
+      "group": "Architecture",
+      "pages": ["architecture/data-fetching"]
+    },
+    {
       "group": "Core APIs",
       "pages": [
         "api-reference/core-apis/get-server-health-status",
         "api-reference/core-apis/get-sample-error",
         "api-reference/core-apis/get-sample-error-bulk-operations"
       ]
-    },
-    {
-      "group": "Architecture",
-      "pages": ["architecture/api-fetching-architecture"]
     },
     {
       "group": "Waitlist",
