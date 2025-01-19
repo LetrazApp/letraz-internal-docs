@@ -50,7 +50,6 @@
     {
       "group": "Core APIs",
       "pages": [
-        "api-reference/core-apis/api-fetching-architecture",
         "api-reference/core-apis/get-server-health-status",
         "api-reference/core-apis/get-sample-error",
         "api-reference/core-apis/get-sample-error-bulk-operations"
