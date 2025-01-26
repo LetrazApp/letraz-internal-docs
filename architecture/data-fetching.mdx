@@ -24,11 +24,11 @@ bun install @tanstack/react-query @tanstack/react-query-devtools
 ### Provider Setup
 
 ```tsx
-// app/components/providers/react-query-provider.tsx
+// /components/providers/api-provider.tsx
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
@@ -36,7 +36,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export default function ReactQueryProvider({
+export default function APIProvider({
   children,
 }: React.PropsWithChildren) {
   return (
@@ -47,14 +47,16 @@ export default function ReactQueryProvider({
   );
 }
 
-// app/components/providers/index.tsx
-import { ReactQueryProvider } from "@/components/providers/react-query-provider";
+// /components/providers/index.tsx
+import { APIProvider } from "@/lib/config/api-client";
 
-const Providers = ({ children }: React.PropsWithChildren) => (
+export const Providers = ({ children }: React.PropsWithChildren) => (
   <ReactQueryProvider>{children}</ReactQueryProvider>
 );
 
 // /app/layout.tsx
+import { Providers } from "@/components/providers";
+
 const RootLayout = ({ children }: React.PropsWithChildren) => (
   <body>
     <Providers>{children}</Providers>
@@ -240,7 +242,7 @@ export const api = {
 ```tsx
 // hooks/useQuery.ts
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { api } from "../lib/api-client";
+import { api } from "@/lib/api-client";
 
 // Basic query hook
 export const useApiQuery = <T,>(options?: QueryOptions<T>) => {
@@ -309,6 +311,7 @@ export const useCustomMutation = <TData, TVariables>(
 ```typescript
 // feature-tag/actions.ts
 "use server";
+
 import { api } from "@/lib/api/client";
 import { ApiResponse, User } from "@/types";
 import { revalidateTag } from "next/cache";
@@ -386,21 +389,6 @@ export const queryKeys = {
 1. **Prefetching Data**: Fetch data on the server using TanStack Query's `queryClient.prefetchQuery`.
 2. **Hydration**: Pass server-fetched data to the client using the `dehydrate` and `Hydrate` APIs.
 
-```tsx
-import { QueryClient } from "@tanstack/react-query";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      cacheTime: 1000 * 60 * 10, // 10 minutes
-    },
-  },
-});
-
-export default queryClient;
-```
-
 ### Prefetch Data in a Page
 
 In Next.js page (`page.tsx`), fetch data on the server and use `dehydrate` to serialize it for hydration:
@@ -408,8 +396,8 @@ In Next.js page (`page.tsx`), fetch data on the server and use `dehydrate` to se
 ```tsx
 // app/page.tsx
 import { Hydrate, dehydrate } from "@tanstack/react-query";
-import queryClient from "@/lib/queryClient";
-import { fetchPokemonList } from "@/lib/fetchers";
+import { queryClient } from "@/components/providers/api-provider";
+import { fetchPokemonList } from "@/lib/actions";
 import PokemonList from "@/components/PokemonList";
 
 export const revalidate = 0; // Disable ISR for simplicity
@@ -466,32 +454,6 @@ export default function PokemonList() {
         </li>
       ))}
     </ul>
-  );
-}
-```
-
-### Wrap the App with `QueryClientProvider`
-
-Wrap app with the `QueryClientProvider` in `app/layout.tsx`:
-
-```tsx
-// app/layout.tsx
-"use client";
-
-import { QueryClientProvider } from "@tanstack/react-query";
-import queryClient from "@/lib/queryClient";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
   );
 }
 ```
