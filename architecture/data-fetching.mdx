@@ -382,7 +382,7 @@ export const queryKeys = {
 } as const;
 ```
 
-## Using Prefetched Data with Hydration in Next.js App Router and TanStack Query
+## Using Prefetched Data with Hydration
 
 ### Key Concepts
 
@@ -438,6 +438,8 @@ Create a utility to fetch data:
 
 ```tsx
 // lib/fetchers.ts
+"use server"
+
 export async function fetchPokemonList() {
   const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
   if (!res.ok) throw new Error("Failed to fetch Pokémon data");
