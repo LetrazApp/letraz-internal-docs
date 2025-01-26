@@ -1,0 +1,473 @@
+---
+title: "Data Fetching"
+description: "Data Fetching Architecture with TanStack Query"
+---
+
+## Overview
+
+This architecture provides a robust solution for data fetching in Next.js applications by combining Server Actions with TanStack Query. Key features:
+
+- 🔄 Seamless server-side and client-side data fetching
+- 📦 Efficient caching and revalidation
+- 🛡️ Type-safe API interactions
+- 🚨 Comprehensive error handling
+- 🎯 Feature-based organization
+- ♾️ Built-in support for infinite scrolling
+
+## Setup
+
+```bash
+# Install required dependencies
+bun install @tanstack/react-query @tanstack/react-query-devtools
+```
+
+### Provider Setup
+
+```tsx
+// /components/providers/api-provider.tsx
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+export default function APIProvider({
+  children,
+}: React.PropsWithChildren) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
+}
+
+// /components/providers/index.tsx
+import { APIProvider } from "@/lib/config/api-client";
+
+export const Providers = ({ children }: React.PropsWithChildren) => (
+  <ReactQueryProvider>{children}</ReactQueryProvider>
+);
+
+// /app/layout.tsx
+import { Providers } from "@/components/providers";
+
+const RootLayout = ({ children }: React.PropsWithChildren) => (
+  <body>
+    <Providers>{children}</Providers>
+  </body>
+);
+```
+
+## Core Types
+
+```typescript
+// lib/config/api-types.ts
+export interface ApiError {
+  message: string;
+  code: string;
+  details?: Record<string, string[]>;
+}
+
+export interface ApiResponse<T> {
+  data?: T;
+  error?: ApiError;
+  meta?: {
+    timestamp: string;
+    version: string;
+  };
+}
+
+export interface PaginatedResponse<T> {
+  results: T[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+  page_size: number;
+  current_page: number;
+  total_pages: number;
+}
+```
+
+## Project Structure
+
+```bash
+/lib
+├── config
+│   └── api-client.ts
+│   └── api-types.ts
+│
+├── [feature-tag]  (replace [feature-tag] with the actual feature name)
+│   ├── hooks
+│   │   └── useFeatureHook.ts
+│   ├── queries.ts
+│   ├── mutations.ts
+│   ├── actions.ts
+│   ├── types.ts
+│   └── keys.ts
+│
+└── misc  (optional for general or shared code)
+    └── someOtherFile.ts
+
+```
+
+## Implementation Details
+
+### API Client Configuration
+
+```typescript
+// lib/config/api-client.ts
+
+type RequestOptions = {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: any;
+  cookie?: string;
+  params?: Record<string, string | number | boolean | undefined | null>;
+  cache?: RequestCache;
+  next?: NextFetchRequestConfig;
+};
+
+function buildUrlWithParams(
+  url: string,
+  params?: RequestOptions["params"]
+): string {
+  if (!params) return url;
+  const filteredParams = Object.fromEntries(
+    Object.entries(params).filter(
+      ([, value]) => value !== undefined && value !== null
+    )
+  );
+  if (Object.keys(filteredParams).length === 0) return url;
+  const queryString = new URLSearchParams(
+    filteredParams as Record<string, string>
+  ).toString();
+  return `${url}?${queryString}`;
+}
+
+// Create a separate function for getting server-side cookies that can be imported where needed
+export function getServerCookies() {
+  if (typeof window !== "undefined") return "";
+
+  // Dynamic import next/headers only on server-side
+  return import("next/headers").then(({ cookies }) => {
+    try {
+      const cookieStore = cookies();
+      return cookieStore
+        .getAll()
+        .map((c) => `${c.name}=${c.value}`)
+        .join("; ");
+    } catch (error) {
+      console.error("Failed to access cookies:", error);
+      return "";
+    }
+  });
+}
+
+async function fetchApi<T>(
+  url: string,
+  options: RequestOptions = {}
+): Promise<T> {
+  const {
+    method = "GET",
+    headers = {},
+    body,
+    cookie,
+    params,
+    cache = "no-store",
+    next,
+  } = options;
+
+  // Get cookies from the request when running on server
+  let cookieHeader = cookie;
+  if (typeof window === "undefined" && !cookie) {
+    cookieHeader = await getServerCookies();
+  }
+
+  const fullUrl = buildUrlWithParams(`${API_URL}${url}`, params);
+
+  const response = await fetch(fullUrl, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...headers,
+      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    credentials: "include",
+    cache,
+    next,
+  });
+
+  if (!response.ok) {
+    const message = (await response.json()).message || response.statusText;
+    if (typeof window !== "undefined") {
+      // error handing
+    }
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
+export const api = {
+  get<T>(url: string, options?: RequestOptions): Promise<T> {
+    return fetchApi<T>(url, { ...options, method: "GET" });
+  },
+  post<T>(url: string, body?: any, options?: RequestOptions): Promise<T> {
+    return fetchApi<T>(url, { ...options, method: "POST", body });
+  },
+  put<T>(url: string, body?: any, options?: RequestOptions): Promise<T> {
+    return fetchApi<T>(url, { ...options, method: "PUT", body });
+  },
+  patch<T>(url: string, body?: any, options?: RequestOptions): Promise<T> {
+    return fetchApi<T>(url, { ...options, method: "PATCH", body });
+  },
+  delete<T>(url: string, options?: RequestOptions): Promise<T> {
+    return fetchApi<T>(url, { ...options, method: "DELETE" });
+  },
+};
+```
+
+### Custom React Query Hooks Example
+
+#### Query Hooks
+
+```tsx
+// hooks/useQuery.ts
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api-client";
+
+// Basic query hook
+export const useApiQuery = <T,>(options?: QueryOptions<T>) => {
+  return useQuery({
+    queryKey: [key],
+    queryFn: () => api.get<ApiResponse<T>>(endpoint).then((res) => res.data),
+    ...options,
+  });
+};
+
+// Custom query hook with server action
+export const useServerQuery = <T,>(
+  queryKey: string[],
+  serverAction: () => Promise<T>,
+  options?: QueryOptions<T>
+) => {
+  return useQuery({
+    queryKey,
+    queryFn: serverAction,
+    ...options,
+  });
+};
+
+// Infinite query hook
+export const useInfiniteApiQuery = () => {
+  return useInfiniteQuery({
+    queryKey: [key],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await api.get<PaginatedResponse>("/");
+      return response.data;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.next) return undefined;
+      const url = new URL(lastPage.next);
+      return url.searchParams.get("page");
+    },
+  });
+};
+```
+
+## Mutation Hooks
+
+```typescript
+// hooks/useCustomMutation.ts
+import { useMutation, MutationOptions } from "@tanstack/react-query";
+import { api } from "../lib/api-client";
+
+export const useCustomMutation = <TData, TVariables>(
+  options?: MutationOptions<TData, Error, TVariables>
+) => {
+  return useMutation({
+    mutationFn: (variables: TVariables) =>
+      api({
+        url: "/",
+        method: "POST", // method
+        data: variables,
+      }),
+    ...options,
+  });
+};
+```
+
+### Server Actions Integration
+
+```typescript
+// feature-tag/actions.ts
+"use server";
+
+import { api } from "@/lib/api/client";
+import { ApiResponse, User } from "@/types";
+import { revalidateTag } from "next/cache";
+
+export async function getUser(id: string): Promise<ApiResponse<User>> {
+  try {
+    const response = await api.get<ApiResponse<User>>(`/api/users/${id}`);
+    revalidateTag(`user-${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Usage
+// hooks/queries/useUser.ts
+export function useUser(id: string) {
+  return useServerQuery(["user", id], () => getUser(id), {
+    enabled: !!id,
+  });
+}
+```
+
+### Error Handling
+
+```tsx
+// in queries
+const { isError, error, isLoadingError } = useQuery({
+  queryKey: [""],
+  queryFn: async () => 0,
+});
+
+useEffect(() => {
+  // handing error
+}, [error]);
+
+// show different components
+if (isError) {
+  return <p>Error</p>;
+}
+if (isLoadingError) {
+  return <p>Error</p>;
+}
+
+// in mutations
+const customMutation = useMutation({
+  queryFn: () => {},
+  onError: () => {
+    // error handing
+  },
+});
+```
+
+### Query Key Management
+
+```typescript
+// lib/utils/query-keys.ts
+export const queryKeys = {
+  users: {
+    all: ["users"] as const,
+    detail: (id: string) => ["users", id] as const,
+    posts: (id: string) => ["users", id, "posts"] as const,
+  },
+  posts: {
+    all: ["posts"] as const,
+    detail: (id: string) => ["posts", id] as const,
+  },
+} as const;
+```
+
+## Using Prefetched Data with Hydration
+
+### Key Concepts
+
+1. **Prefetching Data**: Fetch data on the server using TanStack Query's `queryClient.prefetchQuery`.
+2. **Hydration**: Pass server-fetched data to the client using the `dehydrate` and `Hydrate` APIs.
+
+### Prefetch Data in a Page
+
+In Next.js page (`page.tsx`), fetch data on the server and use `dehydrate` to serialize it for hydration:
+
+```tsx
+// app/page.tsx
+import { Hydrate, dehydrate } from "@tanstack/react-query";
+import { queryClient } from "@/components/providers/api-provider";
+import { fetchPokemonList } from "@/lib/actions";
+import PokemonList from "@/components/PokemonList";
+
+export const revalidate = 0; // Disable ISR for simplicity
+
+export default async function HomePage() {
+  // Prefetch data on the server
+  await queryClient.prefetchQuery(["pokemon"], fetchPokemonList);
+
+  // Dehydrate the data
+  const dehydratedState = dehydrate(queryClient);
+
+  return (
+    <Hydrate state={dehydratedState}>
+      <PokemonList />
+    </Hydrate>
+  );
+}
+```
+
+### Fetch Data with TanStack Query
+
+Create a utility to fetch data:
+
+```tsx
+// lib/fetchers.ts
+"use server"
+
+export async function fetchPokemonList() {
+  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
+  if (!res.ok) throw new Error("Failed to fetch Pokémon data");
+  return res.json();
+}
+```
+
+In component, use `useQuery` to access the hydrated data:
+
+```tsx
+// app/components/PokemonList.tsx
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+
+export default function PokemonList() {
+  const { data, isLoading, isError } = useQuery(["pokemon"], fetchPokemonList);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error fetching Pokémon data</p>;
+
+  return (
+    <ul className="space-y-2">
+      {data.results.map((pokemon: { name: string }, index: number) => (
+        <li key={index} className="capitalize">
+          {pokemon.name}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+For more details, refer to the following links.
+
+- [Example Repo](https://github.com/sahilverma-dev/tanstack-query-nextjs14-example)
+- [Server Rendering & Hydration](https://tanstack.com/query/latest/docs/framework/react/guides/ssr)
+- [Advanced Server Rendering](https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr)
+- [Next 14 + React Query COMBO with Server Actions and RSC](https://www.youtube.com/watch?v=yVsaCVEfPn4)
+- [TanStack Query docs](https://tanstack.com/query)
+- [Next.js App Router docs](https://nextjs.org/docs/app)
+
+## Reference
+
+- [Bullet Proof React - Next JS](https://github.com/alan2207/bulletproof-react/blob/master/apps/nextjs-app/)
+- [Design Patterns in React](https://www.youtube.com/playlist?list=PLApy4UwQM3Updrw-4mOXTwgsWar9bqk6i)
