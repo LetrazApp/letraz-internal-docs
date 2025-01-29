@@ -45,11 +45,11 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": [
-        "introduction",
-        "local-dev-setup",
-        "guidelines"
-      ]
+      "pages": ["introduction", "local-dev-setup", "guidelines"]
+    },
+    {
+      "group": "Architecture",
+      "pages": ["architecture/data-fetching"]
     },
     {
       "group": "API References",
