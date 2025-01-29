@@ -65,27 +65,29 @@
         {
           "group": "Waitlist",
           "pages": [
-            "api-reference/waitlist/get-all-waitlist-entries",
-            "api-reference/waitlist/add-a-new-waitlist-entry"
+            "api-reference/waitlist/get-all-waitlists",
+            "api-reference/waitlist/add-a-new-waitlist"
           ]
         },
         {
           "group": "User profile info",
           "pages": [
-            "api-reference/user-info/get-user-info",
-            "api-reference/user-info/add-a-new-user-info"
+            "api-reference/user/get-user-info",
+            "api-reference/user/add-a-new-user-info"
           ]
         },
         {
           "group": "Resume object",
           "pages": [
-            "api-reference/resume-object/get-one-or-all-resume"
+            "api-reference/resume-object/get-all-resume",
+            "api-reference/resume-object/get-resume-by-id"
           ]
         },
         {
           "group": "Education",
           "pages": [
             "api-reference/education-object/get-all-educations",
+            "api-reference/education-object/get-education-by-id",
             "api-reference/education-object/add-a-new-education",
             "api-reference/education-object/delete-an-education"
           ]
@@ -94,7 +96,8 @@
           "group": "Experience",
           "pages": [
             "api-reference/experience-object/get-all-experiences",
-            "api-reference/experience-object/add-a-new-experience",
+            "api-reference/experience-object/get-experience-by-id",
+            "api-reference/experience-object/create-a-new-experience",
             "api-reference/experience-object/delete-an-experience"
           ]
         },
