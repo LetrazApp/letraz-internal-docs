@@ -184,7 +184,7 @@ paths:
       operationId: resume_education_create
       description: |-
         Adds a new education to the user's resume as specified in the resume id.
-        If a base resume id is provided, the education is added to the base resume.
+        If a base is provided as the resume_id, the education is added to the base resume.
       summary: Add a new education
       parameters:
       - in: path
@@ -581,30 +581,26 @@ components:
           readOnly: true
         started_from_month:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 32767
           minimum: 0
-          format: int64
           nullable: true
           description: The month the user started studying. (optional)
         started_from_year:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 32767
           minimum: 0
-          format: int64
           nullable: true
           description: The year the user started studying. (optional)
         finished_at_month:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 32767
           minimum: 0
-          format: int64
           nullable: true
           description: The month the user finished studying. (optional)
         finished_at_year:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 32767
           minimum: 0
-          format: int64
           nullable: true
           description: The year the user finished studying. (optional)
         current:
@@ -722,30 +718,26 @@ components:
           readOnly: true
         started_from_month:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 32767
           minimum: 0
-          format: int64
           nullable: true
           description: The month the user started working.
         started_from_year:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 32767
           minimum: 0
-          format: int64
           nullable: true
           description: The year the user started working.
         finished_at_month:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 32767
           minimum: 0
-          format: int64
           nullable: true
           description: The month the user finished working. (optional)
         finished_at_year:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 32767
           minimum: 0
-          format: int64
           nullable: true
           description: The year the user finished working. (optional)
         current:
@@ -820,7 +812,7 @@ components:
           type: string
           x-spec-enum-id: b596af6019cf09ff
           description: |-
-            The health status of Clerk integration. The status can be ok, degraded or failing.
+            The health status of Clerk integration. The status can be OPERATIONAL or DOWN.
 
             * `OPERATIONAL` - OPERATIONAL
             * `DOWN` - DOWN
@@ -832,7 +824,7 @@ components:
           type: string
           x-spec-enum-id: 30d9ff093e6722d6
           description: |-
-            The health status of  Clerk connection. The status can be ok, degraded or failing.
+            The health status of  Clerk connection. The status can be OPERATIONAL, DEGRADED or FATAL.
 
             * `OPERATIONAL` - OPERATIONAL
             * `DEGRADED` - DEGRADED
