@@ -262,50 +262,59 @@ export const api = {
 
 #### Query Hooks
 
-```tsx
-// hooks/useQuery.ts
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api-client";
+<CodeGroup>
+```tsx /hooks/useQuery.ts
+import {useQuery} from '@tanstack/react-query'
+import {api} from '@/lib/api-client'
 
 // Basic query hook
 export const useApiQuery = <T,>(options?: QueryOptions<T>) => {
-  return useQuery({
-    queryKey: [key],
-    queryFn: () => api.get<ApiResponse<T>>(endpoint).then((res) => res.data),
-    ...options,
-  });
-};
+    return useQuery({
+        queryKey: [key],
+        queryFn: () => api.get<ApiResponse<T>>(endpoint).then((res) => res.data),
+        ...options,
+    })
+}
+```
 
-// Custom query hook with server action
-export const useServerQuery = <T,>(
-  queryKey: string[],
-  serverAction: () => Promise<T>,
-  options?: QueryOptions<T>
+```tsx /hooks/useServerQuery.ts
+import {useQuery} from '@tanstack/react-query'
+import {api} from '@/lib/api-client'
+
+export const useServerQuery = <T>(
+    queryKey: string[],
+    serverAction: () => Promise<T>, options?: QueryOptions<T>
 ) => {
-  return useQuery({
-    queryKey,
-    queryFn: serverAction,
-    ...options,
-  });
-};
+    return useQuery({
+        queryKey,
+        queryFn: serverAction,
+        ...options
+    })
+}
+```
 
-// Infinite query hook
+```tsx /hooks/useInfiniteApiQuery.ts
+import {useInfiniteQuery} from '@tanstack/react-query'
+import {api} from '@/lib/api-client'
+
 export const useInfiniteApiQuery = () => {
-  return useInfiniteQuery({
-    queryKey: [key],
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await api.get<PaginatedResponse>("/");
-      return response.data;
-    },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.next) return undefined;
-      const url = new URL(lastPage.next);
-      return url.searchParams.get("page");
-    },
-  });
+    return useInfiniteQuery({
+        queryKey: [key],
+        queryFn: async ({ pageParam = 1 }) => {
+            const response = await api.get<PaginatedResponse>("/");
+            return response.data;
+        },
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+            if (!lastPage.next) return undefined
+            const url = new URL(lastPage.next)
+            return url.searchParams.get("page")
+        }
+    })
 };
 ```
+</CodeGroup>
+
 
 #### Mutation Hooks
 
