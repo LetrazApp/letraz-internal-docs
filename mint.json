@@ -49,7 +49,10 @@
     },
     {
       "group": "Architecture",
-      "pages": ["architecture/data-fetching"]
+      "pages": [
+        "architecture/database-schema",
+        "architecture/data-fetching"
+      ]
     },
     {
       "group": "API References",

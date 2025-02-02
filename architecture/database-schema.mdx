@@ -1,0 +1,82 @@
+---
+title: "Database Schema"
+description: "A comprehensive overview of the database schema of Letraz's systems. Letraz's database is designed to efficiently manage resume generation by storing user data, resume configurations, and job-related information. While this documentation is primarily for internal use, it is also publicly accessible for transparency, as Letraz is an open-source project. This document provides an overview of the schema, its structure, and the philosophy behind its design."
+---
+
+<img
+    className="rounded-lg"
+    src="/images/db-doc.png"
+    alt="Database schema cover image"
+/>
+
+## Overview
+
+The Letraz database is the backbone of our application’s data management, supporting both our core business logic and ancillary services. Designed with scalability, flexibility, and clarity in mind, the schema has been refined over time, and we'll continue to do so as the schema evolves with our project. Below is a visual representation of the database schema:
+
+<img
+    className="rounded-lg"
+    src="/images/db-schema.png"
+    alt="Database Schema"
+/>
+
+## Design Philosophy
+The Letraz database follows a structured approach with a focus on modularity and scalability. The key principles guiding our schema design are:
+
+1. **User-Centric Data Organization**: Each user owns and manages their resumes, experiences, education, projects, skills, and strengths.
+2. **Modular Resume Composition**: Resumes are constructed from distinct sections, allowing flexibility and customization.
+3. **Job Matching and Optimization**: The system stores job postings, allowing intelligent resume tailoring.
+4. **Efficient Export and Versioning**: Export requests and version control ensure that users can manage multiple variations of their resumes seamlessly.
+
+## Schema Overview
+Below is a breakdown of the main entities in the database:
+
+### 1. **User Table (`user`)**
+- Stores personal information such as name, email, contact details, nationality, and profile text.
+- Tracks account status with fields like `is_active` and `is_staff`.
+- Users are linked to their resumes and other related entities.
+
+### 2. **Resumes Table (`resumes`)**
+- Represents individual resumes created by users.
+- Contains metadata such as `base` (indicating if it's a primary resume) and `personal_info`.
+- Connected to multiple `resume_section` records, allowing flexible customization.
+
+### 3. **Resume Sections Table (`resume_section`)**
+- Stores individual components of a resume (e.g., experience, education, skills).
+- Each section is linked to a `resume` and has an `index` field to maintain order.
+- The `type` field is an enum representing different section types.
+
+### 4. **Education Table (`education`)**
+- Captures academic qualifications of users.
+- Fields include `institution_name`, `degree`, `field_of_study`, and `duration`.
+- Supports ongoing education with the `current` boolean flag.
+
+### 5. **Experience Table (`experience`)**
+- Logs professional experiences.
+- Fields include `company_name`, `job_title`, `location`, `duration`, and `description`.
+
+### 6. **Projects Table (`projects`)**
+- Tracks individual projects completed by users.
+- Includes `category`, `name`, `duration`, and `description`.
+
+### 7. **Skills Table (`skills`)**
+- Stores skills associated with users.
+- Includes `name`, `category`, and `proficiency` as an enum.
+
+### 8. **Strengths Table (`strengths`)**
+- Captures user strengths that aren't necessarily hard skills.
+
+### 9. **Jobs Table (`jobs`)**
+- Stores job postings.
+- Fields include `title`, `company_name`, `location`, `employment_type`, `salary_range`, `description`, and `requirements`.
+- Used for AI-powered resume tailoring.
+
+### 10. **Export Requests Table (`export_request`)**
+- Tracks requests for exporting resumes.
+- Contains metadata such as `created_at`, `expires_at`, and `downloaded`.
+
+## Future Considerations
+- **Performance Optimization**: Indexing frequently queried fields.
+- **Data Privacy**: Ensuring user data security and compliance.
+- **Enhanced Resume Customization**: Additional section types and templates.
+
+This document will be updated as the schema evolves to better support Letraz's functionality and user experience.
