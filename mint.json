@@ -87,7 +87,7 @@
           ]
         },
         {
-          "group": "Education",
+          "group": "Education object",
           "pages": [
             "api-reference/education-object/get-all-educations",
             "api-reference/education-object/get-education-by-id",
@@ -96,12 +96,23 @@
           ]
         },
         {
-          "group": "Experience",
+          "group": "Experience object",
           "pages": [
             "api-reference/experience-object/get-all-experiences",
             "api-reference/experience-object/get-experience-by-id",
             "api-reference/experience-object/create-a-new-experience",
             "api-reference/experience-object/delete-an-experience"
+          ]
+        },
+        {
+          "group": "Skill object",
+          "pages": [
+            "api-reference/resume-skill-object/get-all-global-skills",
+            "api-reference/resume-skill-object/get-all-skill-of-the-resume",
+            "api-reference/resume-skill-object/get-all-skill-category-for-the-resume",
+            "api-reference/resume-skill-object/add-a-new-skill-to-resume",
+            "api-reference/resume-skill-object/update-an-existing-skill-to-resume",
+            "api-reference/resume-skill-object/remove-skill-from-resume"
           ]
         },
         {

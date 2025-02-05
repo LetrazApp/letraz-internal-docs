@@ -120,7 +120,8 @@ paths:
   /resume/{id}/:
     get:
       operationId: resume_retrieve
-      description: Gives a resume for the user by produced id
+      description: Gives a resume for the user by produced id or gives base resume
+        of the user if id is provided as `base`.
       summary: Get resume by id
       parameters:
       - in: path
@@ -417,6 +418,199 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
+  /resume/{resume_id}/skill/:
+    get:
+      operationId: resume_skill_list
+      description: Gives all skill for the Resume id or base if `base`  is provided
+        as resume id
+      summary: Get all skill of the resume
+      parameters:
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base educations, just put `base` in here
+        required: true
+      tags:
+      - Resume Skill object
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Proficiency'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    post:
+      operationId: resume_skill_create
+      description: |-
+        Adds a new Skill to the user's resume as specified in the resume id.
+        If a base resume id is provided, the Skill is added to the base resume.
+      summary: Add a new Skill to resume
+      parameters:
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base educations, just put `base` in here
+        required: true
+      tags:
+      - Resume Skill object
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proficiency'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /resume/{resume_id}/skill/{id}/:
+    patch:
+      operationId: resume_skill_partial_update
+      description: |-
+        Update an existing Skill-proficiency to the user's resume as specified in the resume id.
+        If a base resume id is provided, the Skill is updated for the base resume.
+      summary: Update an existing Skill to resume
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        description: ID of the Skill-proficiency you want to delete for the resume
+        required: true
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base educations, just put `base` in here
+        required: true
+      tags:
+      - Resume Skill object
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proficiency'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    delete:
+      operationId: resume_skill_destroy
+      description: Deletes a skill-proficiency from the user's resume as specified
+        in the resume id or base resume if `base ids provided as resume id`.
+      summary: Remove skill from resume
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        description: ID of the Skill-proficiency you want to delete for the resume
+        required: true
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base educations, just put `base` in here
+        required: true
+      tags:
+      - Resume Skill object
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /resume/{resume_id}/skill/categories/:
+    get:
+      operationId: resume_skill_categories_list
+      description: Get all skill category for the resume
+      summary: Get all skill category for the resume
+      parameters:
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base educations, just put `base` in here
+        required: true
+      tags:
+      - Resume Skill object
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /skills/:
+    get:
+      operationId: skills_list
+      description: Get all skills available in the database across users and resumes
+      summary: Get all global skills
+      tags:
+      - Resume Skill object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skill'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
   /user/:
     get:
       operationId: user_retrieve
@@ -534,6 +728,41 @@ paths:
           description: ''
 components:
   schemas:
+    AliasSkill:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The unique identifier for the experience entry.
+        category:
+          type: string
+          nullable: true
+          description: The category of the skill. (optional)
+          maxLength: 50
+        name:
+          type: string
+          description: The name of the skill.
+          maxLength: 250
+        preferred:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the skill entry was created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the skill entry was last updated.
+      required:
+      - category
+      - created_at
+      - id
+      - name
+      - updated_at
     Country:
       type: object
       properties:
@@ -581,26 +810,30 @@ components:
           readOnly: true
         started_from_month:
           type: integer
-          maximum: 32767
+          maximum: 9223372036854775807
           minimum: 0
+          format: int64
           nullable: true
           description: The month the user started studying. (optional)
         started_from_year:
           type: integer
-          maximum: 32767
+          maximum: 9223372036854775807
           minimum: 0
+          format: int64
           nullable: true
           description: The year the user started studying. (optional)
         finished_at_month:
           type: integer
-          maximum: 32767
+          maximum: 9223372036854775807
           minimum: 0
+          format: int64
           nullable: true
           description: The month the user finished studying. (optional)
         finished_at_year:
           type: integer
-          maximum: 32767
+          maximum: 9223372036854775807
           minimum: 0
+          format: int64
           nullable: true
           description: The year the user finished studying. (optional)
         current:
@@ -718,26 +951,30 @@ components:
           readOnly: true
         started_from_month:
           type: integer
-          maximum: 32767
+          maximum: 9223372036854775807
           minimum: 0
+          format: int64
           nullable: true
           description: The month the user started working.
         started_from_year:
           type: integer
-          maximum: 32767
+          maximum: 9223372036854775807
           minimum: 0
+          format: int64
           nullable: true
           description: The year the user started working.
         finished_at_month:
           type: integer
-          maximum: 32767
+          maximum: 9223372036854775807
           minimum: 0
+          format: int64
           nullable: true
           description: The month the user finished working. (optional)
         finished_at_year:
           type: integer
-          maximum: 32767
+          maximum: 9223372036854775807
           minimum: 0
+          format: int64
           nullable: true
           description: The year the user finished working. (optional)
         current:
@@ -1005,6 +1242,39 @@ components:
           type: string
           description: The country the user lives in. (optional)
           nullable: true
+    Proficiency:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The unique identifier for the experience entry.
+        skill:
+          $ref: '#/components/schemas/Skill'
+        resume_section:
+          type: string
+          format: uuid
+          description: The unique identifier for the resume section entry.
+        level:
+          enum:
+          - BEG
+          - INT
+          - ADV
+          - EXP
+          - null
+          type: string
+          description: |-
+            * `BEG` - Beginner
+            * `INT` - Intermediate
+            * `ADV` - Advanced
+            * `EXP` - Expert
+          x-spec-enum-id: 0b41a707f07a9295
+          nullable: true
+      required:
+      - id
+      - resume_section
+      - skill
     ResumeFull:
       type: object
       properties:
@@ -1053,6 +1323,46 @@ components:
       - id
       - job
       - user
+    Skill:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The unique identifier for the experience entry.
+        category:
+          type: string
+          nullable: true
+          description: The category of the skill. (optional)
+          maxLength: 50
+        name:
+          type: string
+          description: The name of the skill.
+          maxLength: 250
+        preferred:
+          type: boolean
+        alias:
+          type: array
+          items:
+            $ref: '#/components/schemas/AliasSkill'
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the skill entry was last updated.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the skill entry was created.
+      required:
+      - alias
+      - category
+      - created_at
+      - id
+      - name
+      - updated_at
     User:
       type: object
       properties:
