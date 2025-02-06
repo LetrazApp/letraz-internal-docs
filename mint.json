@@ -48,6 +48,12 @@
       "pages": ["introduction", "local-dev-setup", "guidelines"]
     },
     {
+      "group": "Documents",
+      "pages": [
+        "documents/prd-alpha"
+      ]
+    },
+    {
       "group": "Architecture",
       "pages": [
         "architecture/database-schema",

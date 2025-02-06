@@ -1,0 +1,223 @@
+---
+title: "PRD (Requirements) - Alpha"
+description: "Data Fetching Architecture with TanStack Query and Server Actions in Letraz's client side repository. This architecture provides a robust solution for data fetching in Next.js applications featuring seamless server-side and client-side data fetching, efficient caching and revalidation, type-safe API interactions, comprehensive error handling, feature-based organization, and built-in support for infinite scrolling."
+---
+
+**Version:** 1.0
+**Date:** 06/02/2025
+**Authors:** Subhajit Kundu, Arnab Biswas
+
+## 1. Project Overview
+
+### 1.1 Project Name
+
+**Letraz** — Craft unique resumes for each job application effortlessly
+
+This name comes from the Spanish word "letras" that means letters or sometimes documents or resumes. We have modified the original word to suit the overall theme of our product.
+
+### 1.2 Project Description
+
+Letraz is an AI-powered resume builder that helps users craft unique resumes tailored to specific job applications. Unlike traditional resume builders, Letraz focuses on solving users' problems automatically, ensuring each resume is optimized based on job descriptions to increase selection chances.
+
+### 1.3 Problem Statement
+
+Job seekers often struggle to create impactful resumes that align with job requirements. Traditional resume builders provide static templates that do not adapt to different job descriptions. Letraz solves this problem by:
+
+- Extracting key insights from job descriptions.
+- Dynamically restructuring resume content for the best match.
+- Optimizing resume presentation to improve selection chances.
+
+### 1.4 Goals and Objectives
+
+- Enable users to create, customize, and manage multiple resumes seamlessly.
+- Automatically tailor resumes based on job descriptions using AI.
+- Provide a real-time, interactive preview of the resume.
+- Allow users to download resumes in professional formats (PDF, LaTeX etc..).
+- Ensure a smooth user experience with a modern, intuitive UI.
+- Support multiple resume templates for different industries and job roles.
+
+
+<hr/>
+
+## 2 Target Users
+
+### 2.1 Primary Users
+
+- **Job Seekers**: Fresh graduates, mid-career professionals, and experienced individuals looking for new opportunities.
+- **Freelancers**: Those applying for project-based work or contract roles.
+- **Recruiters & HR Professionals** (Potential future expansion): Organizations or HR firms looking to assist candidates with optimized resumes.
+
+### 2.2 User Goals
+
+- Quickly generate a professional, ATS-friendly resume.
+- Customize resumes for different job applications with minimal effort.
+- Save and manage multiple resume versions.
+- Download and share resumes efficiently.
+
+
+<hr/>
+
+
+## 3. Functional Requirements
+
+### 3.1 User Authentication & Onboarding
+
+- Users can sign up, log in, and log out using Clerk authentication.
+- OAuth integrations with Google and GitHub and in future LinkedIn.
+- Collecting basic user information (name, email, past experience & education).
+- Option to import existing resumes (PDF, LinkedIn, etc.).
+- Page that shows the base resume in edit mode generated from the collected information and user can make edits, add information & sections and finalize the base resume.
+- Account settings and management through Clerk.
+
+### 3.2 Resume Creation & Management
+
+- **Dashboard:** Users can edit, and manage multiple resumes as well as trigger creation of new resume by pasting a job description.
+- **Section Customization:** Each resume can have these sections:
+- Personal Information
+- Education history
+- Work Experience
+- Projects
+- Skills
+- Certifications
+- Strengths
+- Custom sections (future scope)
+- **Resume Download & Export**:
+- **Format supported:**
+- PDF (LaTeX-rendered in server side for professional quality)
+- LaTeX (.tex)
+- DOCX (future scope)
+- **Export options:**
+- Direct download
+- Shareable resume link
+
+### 3.3 AI-Powered Resume Optimization
+
+- Users input a job description or URL.
+- AI analyzes the description and deduces the best way to present the resume for that job description.
+- AI generates a new resume optimized for that job.
+- AI rewrites descriptions & summaries to better suit the requirements of the job (if applicable).
+- User can converse with the AI to make further adjustments.
+- User can further edit the resume in the full editor view.
+
+### 3.4 Resume Customization & Editing
+
+- Drag-and-drop section reordering.
+- In-place editing of text fields as well as side-by-side editor view.
+- Support for multiple resume templates (start with a single template).
+- Live resume preview while editing.
+- Resume versioning (track past iterations) with option to revert back.
+
+
+<hr/>
+
+
+## 4. Non-Functional Requirements
+
+### 4.1 Performance
+
+- Resume generation and PDF export should be fast (optimize for lowest possible latency).
+- AI optimizations should process within reasonable time (less than 5s, optimize for streaming).
+
+### 4.2 Security & Privacy
+
+- User data must be securely stored and encrypted.
+- Compliance with GDPR and other data protection regulations.
+
+### 4.3 Scalability
+
+- System should support high traffic without performance degradation.
+- Cloud-based storage for user resumes.
+
+### 4.4 Accessibility
+
+- Responsive design for mobile and desktop.
+- Support for screen readers and keyboard navigation. (future scope)
+
+
+<hr/>
+
+
+## 5. Technical Requirements
+
+### 5.1 Tech Stack
+
+- **Frontend**: Next.js (React-based)
+- **Backend**: Django with django-rest-framework (Python)
+- **Database:** PostgreSQL with NeonDB
+- **Authentication:** Clerk
+- **PDF Generation**: LaTeX-based rendering (PyLaTeX).
+- **Email:** Resend
+- **Hosting & Deployment:** Vercel (Frontend), DigitalOcean VPS (Backend)
+- **Ancillary services:** Posthog, Sentry, Mintlify, Ghost
+
+### 5.2 System Architecture
+
+- **Frontend (Next.js)** interacts with **Backend (Django)** via REST API.
+- **Database (PostgreSQL)** stores user resumes and job descriptions.
+- **AI Processing** for resume optimization Vercel AI SDK with Anthropic and OpenAI models.
+- **PDF Generation** happens server-side using LaTeX templates and gets stored in a storage bucket.
+
+### 5.3 Database Schema
+
+_Refer to internal [documentation](https://outline.letraz.app/architecture/database-schema)_
+
+
+<hr/>
+
+
+## 6. Risks & Mitigation Strategies
+
+|**Risk**|**Impact**|**Mitigation**|
+|---|---|---|
+|AI-generated content may not always be accurate|Medium|Allow users to manually edit AI suggestions|
+|PDF generation latency|High|Optimize LaTeX rendering, use caching|
+|High server load due to AI processing|High|Implement rate limiting, optimize AI calls|
+|Data loss due to server failures|High|Implement automated backups|
+
+
+<hr/>
+
+
+## 7. Security & Compliance
+
+- **User Authentication**: Clerk ensures secure logins.
+- **Data Encryption**: Store sensitive data in an encrypted format.
+- **GDPR Compliance**: Allow users to delete their data completely.
+- **Access Control**: Restrict unauthorized access to resume data.
+
+
+<hr/>
+
+
+## 8. Open Questions & Unresolved Items
+
+- **AI Model Selection**: What model will be used for job description parsing & optimization?
+- **LaTeX Rendering Optimization**: What is the best approach for balancing customization and performance?
+
+
+<hr/>
+
+
+## 9. Future Enhancements
+
+- Integration with LinkedIn for automatically importing user's information.
+- Cover letter generation along with tailored resume.
+- Mobile app version for creating resumes on the go.
+- Browser extension so user won't have to leave the job site.
+- Raycast extension to create resumes instantly for power users.
+
+
+<hr/>
+
+
+## 10. Appendix
+
+- [Internal documentation](https://outline.letraz.app/introduction)
+- [Database schema](https://outline.letraz.app/architecture/database-schema)
+- [API reference](https://outline.letraz.app/api-reference/core-apis/get-server-health-status)
+
+
+<hr/>
+
+
+This is a document that outlines the product requirements for the earliest version of Letraz. As soon as the alpha version of Letraz is released to the general public, this doc should be considered outdated and only be referred to as guidelines and for ideas about future improvements. This is not an ever evolving document and won't be updated over time.
