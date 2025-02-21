@@ -531,6 +531,121 @@ export default function PokemonList() {
 }
 ```
 
+## Optimistic Updates
+
+### 1: Make a Server Action
+
+
+```typescript
+// actions.ts
+"use server" // This is a server action
+
+import {api} from "@/lib/config/api-client"
+import {Experience, ExperienceMutation, ExperienceMutationSchema, ExperienceSchema} from "@/lib/experience/types"
+
+export const addExperienceToDB = async (experienceValues: ExperienceMutation): Promise<Experience> => {
+  const params = ExperienceMutationSchema.parse(experienceValues)
+  const data = await api.post<Experience>("/resume/base/experience/", params)
+  return ExperienceSchema.parse(data)
+};
+
+```
+
+### 2: Create a Custom Hook for Optimistic Updates
+
+```typescript
+// mutations.ts
+import {Experience, ExperienceMutation} from '@/lib/experience/types'
+import {MutationOptions, useMutation} from '@tanstack/react-query'
+import {deleteExperienceFromDB, addExperienceToDB} from '@/lib/experience/actions'
+
+export const useAddUserExperienceMutation = (options?: MutationOptions<Experience, Error, ExperienceMutation>) => useMutation(
+	{
+		mutationFn: addExperienceToDB,
+		...options // Open Close Principle - Open for extension, closed for modification
+	}
+)
+
+export const useDeleteExperienceMutation = (options?:MutationOptions<void, Error, string>) => useMutation({
+	mutationFn: (experienceId) => deleteExperienceFromDB(experienceId, 'base'),
+	...options
+})
+
+
+
+```
+### 3: Make Reuseable Query Options
+
+```tsx
+// queries.ts
+import {queryOptions, useQuery} from '@tanstack/react-query'
+import {EXPERIENCE_KEYS} from './keys' // 
+import {getExperiencesFromDB} from './actions'
+
+export const experienceQueryOptions = queryOptions({
+	queryKey: EXPERIENCE_KEYS,
+	queryFn: () => getExperiencesFromDB('base')
+})
+
+// not needed for optimistic updates
+export const useCurrentExperiences = () => useQuery(experienceQueryOptions)
+
+```
+
+### 3: Use the Hook in a Component
+
+```tsx
+'use client' // This is a client side component
+const queryClient = useQueryClient()
+
+
+// hook in action
+const {mutateAsync, isPending} = useAddUserExperienceMutation({
+  onMutate: async (newExperience) => {
+    // Cancel any outgoing re-fetches
+    // (so they don't overwrite our optimistic update)
+    await queryClient.cancelQueries(experienceQueryOptions)
+    
+    
+    // Snapshot the previous value
+    const prevExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
+    // Optimistically update to the new value
+    queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData:any) => oldData ? [...oldData, newExperience] : oldData)
+    // TODO remove this any the
+
+    // Return a context object with the snapshotted value
+    return {prevExperiences}
+  },
+  // If the mutation fails,
+  // use the context returned from onMutate to roll back
+  // TODO remove this any the
+  onError: (err, newExperience, context:any) => {
+    queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+    throw Error('Failed to add experience')
+  },
+  // Always refetch after error or success:
+  onSettled: () => {
+    queryClient.invalidateQueries(experienceQueryOptions)
+  }
+})
+
+
+// handle mutation
+const handleSubmit = async (values: ExperienceMutation) => {
+  try {
+    await mutateAsync(values)
+  } catch (error) {
+    toast.error('Failed to add experience')
+  }
+}
+```
+
+
+
+
+
+
+
 For more details, refer to the following links.
 
 - [Example Repo](https://github.com/sahilverma-dev/tanstack-query-nextjs14-example)
