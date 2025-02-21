@@ -4,9 +4,9 @@ description: "Data Fetching Architecture with TanStack Query and Server Actions 
 ---
 
 <img
-    className="rounded-lg"
-    src="/images/data-fetching.png"
-    alt="Data fetching cover image"
+  className="rounded-lg"
+  src="/images/data-fetching.png"
+  alt="Data fetching cover image"
 />
 
 ## Overview
@@ -20,9 +20,11 @@ This architecture provides a robust solution for data fetching in Next.js applic
 - 🎯 Feature-based organization
 - ♾️ Built-in support for infinite scrolling
 
-<Note>Please note that this documentation is tailored for the Letraz's client side code and is an evolving document. The information provided here is subject to change based on the evolving requirements of the project.</Note>
-
-
+<Note>
+  Please note that this documentation is tailored for the Letraz's client side
+  code and is an evolving document. The information provided here is subject to
+  change based on the evolving requirements of the project.
+</Note>
 
 ## Setup
 
@@ -36,78 +38,77 @@ bun install @tanstack/react-query @tanstack/react-query-devtools
 <CodeGroup>
 
 ```tsx /components/providers/api-provider.tsx
-'use client'
+"use client"
 
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
-import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 export const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            refetchOnWindowFocus: false
-        }
-    }
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
 })
 
-const APIProvider = ({children}: React.PropsWithChildren) => (
-    <QueryClientProvider client={queryClient}>
-        {children}
-        <ReactQueryDevtools initialIsOpen={false}/>
-    </QueryClientProvider>
+const APIProvider = ({ children }: React.PropsWithChildren) => (
+  <QueryClientProvider client={queryClient}>
+    {children}
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 )
 
 export default APIProvider
 ```
 
 ```tsx /components/providers/index.tsx
-import {APIProvider} from '@/lib/config/api-client'
+import { APIProvider } from "@/lib/config/api-client"
 
-export const Providers = ({children}: React.PropsWithChildren) => (
-    <ReactQueryProvider>{children}</ReactQueryProvider>
+export const Providers = ({ children }: React.PropsWithChildren) => (
+  <ReactQueryProvider>{children}</ReactQueryProvider>
 )
 ```
 
 ```tsx /app/layout.tsx
-import {Providers} from '@/components/providers'
+import { Providers } from "@/components/providers"
 
-const RootLayout = ({ hildren}: React.PropsWithChildren) => (
-    <body>
-        <Providers>{children}</Providers>
-    </body>
+const RootLayout = ({ hildren }: React.PropsWithChildren) => (
+  <body>
+    <Providers>{children}</Providers>
+  </body>
 )
 
 export default RootLayout
 ```
+
 </CodeGroup>
-
-
 
 ## Core Types
 
 ```typescript /lib/config/api-types.ts
 export interface ApiError {
-  message: string;
-  code: string;
-  details?: Record<string, string[]>;
+  message: string
+  code: string
+  details?: Record<string, string[]>
 }
 
 export interface ApiResponse<T> {
-  data?: T;
-  error?: ApiError;
+  data?: T
+  error?: ApiError
   meta?: {
-    timestamp: string;
-    version: string;
-  };
+    timestamp: string
+    version: string
+  }
 }
 
 export interface PaginatedResponse<T> {
-  results: T[];
-  count: number;
-  next: string | null;
-  previous: string | null;
-  page_size: number;
-  current_page: number;
-  total_pages: number;
+  results: T[]
+  count: number
+  next: string | null
+  previous: string | null
+  page_size: number
+  current_page: number
+  total_pages: number
 }
 ```
 
@@ -138,123 +139,138 @@ export interface PaginatedResponse<T> {
 ### API Client Configuration
 
 ```typescript /lib/config/api-client.ts
-import * as Sentry from '@sentry/nextjs'
-import {ApiError} from '@/lib/config/api-types'
+import * as Sentry from "@sentry/nextjs"
+import { ApiError } from "@/lib/config/api-types"
 
 type RequestOptions = {
-	method?: string
-	headers?: Record<string, string>
-	body?: any
-	cookie?: string
-	params?: Record<string, string | number | boolean | undefined | null>
-	cache?: RequestCache
-	next?: NextFetchRequestConfig
+  method?: string
+  headers?: Record<string, string>
+  body?: any
+  cookie?: string
+  params?: Record<string, string | number | boolean | undefined | null>
+  cache?: RequestCache
+  next?: NextFetchRequestConfig
 }
 
 const buildUrlWithParams = (
-	url: string,
-	params?: RequestOptions['params']
+  url: string,
+  params?: RequestOptions["params"]
 ): string => {
-	if (!params) return url
-	const filteredParams = Object.fromEntries(
-		Object.entries(params).filter(
-			([, value]) => value !== undefined && value !== null
-		)
-	)
-	if (Object.keys(filteredParams).length === 0) return url
-	const queryString = new URLSearchParams(
-		filteredParams as Record<string, string>
-	).toString()
-	return `${url}?${queryString}`
+  if (!params) return url
+  const filteredParams = Object.fromEntries(
+    Object.entries(params).filter(
+      ([, value]) => value !== undefined && value !== null
+    )
+  )
+  if (Object.keys(filteredParams).length === 0) return url
+  const queryString = new URLSearchParams(
+    filteredParams as Record<string, string>
+  ).toString()
+  return `${url}?${queryString}`
 }
 
 // Create a separate function for getting server-side cookies that can be imported where needed
 export const getServerCookies = async () => {
-	if (typeof window !== 'undefined') return ''
+  if (typeof window !== "undefined") return ""
 
-	// Dynamic import next/headers only on server-side
-	try {
-		const {cookies} = await import('next/headers')
-		const cookieStore = await cookies()
+  // Dynamic import next/headers only on server-side
+  try {
+    const { cookies } = await import("next/headers")
+    const cookieStore = await cookies()
 
-		// Define the cookies to be included in the request to the API
-		const selectedCookies = ['__session']
+    // Define the cookies to be included in the request to the API
+    const selectedCookies = ["__session"]
 
-		// Construct the Cookie header manually
-		return selectedCookies
-			.map((name) => {
-				const cookie = cookieStore.get(name)
-				return cookie ? `${cookie.name}=${cookie.value}` : null
-			})
-			.filter(Boolean) // Remove null values
-			.join('; ')
-	} catch (error) {
-		Sentry.captureException(error)
-		return ''
-	}
+    // Construct the Cookie header manually
+    return selectedCookies
+      .map((name) => {
+        const cookie = cookieStore.get(name)
+        return cookie ? `${cookie.name}=${cookie.value}` : null
+      })
+      .filter(Boolean) // Remove null values
+      .join(" ")
+  } catch (error) {
+    Sentry.captureException(error)
+    return ""
+  }
 }
 
-const fetchApi = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
-	const {
-		method = 'GET',
-		headers = {},
-		body,
-		cookie,
-		params,
-		cache = 'no-store',
-		next
-	} = options
+const fetchApi = async <T>(
+  url: string,
+  options: RequestOptions = {}
+): Promise<T> => {
+  const {
+    method = "GET",
+    headers = {},
+    body,
+    cookie,
+    params,
+    cache = "no-store",
+    next,
+  } = options
 
-	// Get cookies from the request when running on server
-	let cookieHeader = cookie
-	if (typeof window === 'undefined' && !cookie) {
-		cookieHeader = await getServerCookies()
-	}
+  // Get cookies from the request when running on server
+  let cookieHeader = cookie
+  if (typeof window === "undefined" && !cookie) {
+    cookieHeader = await getServerCookies()
+  }
 
-	const fullUrl = buildUrlWithParams(`${process.env.API_URL}${url}`, params)
+  const fullUrl = buildUrlWithParams(`${process.env.API_URL}${url}`, params)
 
-	const response = await fetch(fullUrl, {
-		method,
-		headers: {
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-			...headers,
-			...(cookieHeader ? {Cookie: cookieHeader} : {})
-		},
-		body: body ? JSON.stringify(body) : undefined,
-		credentials: 'include',
-		cache,
-		next
-	})
+  const response = await fetch(fullUrl, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...headers,
+      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    credentials: "include",
+    cache,
+    next,
+  })
 
-	if (!response.ok) {
-		const error = ((await response.json()) || response.statusText) as ApiError
-		if (typeof window !== 'undefined') {
-			// error handing
-		}
+  if (!response.ok) {
+    const error = ((await response.json()) || response.statusText) as ApiError
+    if (typeof window !== "undefined") {
+      // error handing
+    }
 
-		throw new Error(error.message)
-	}
+    throw new Error(error.message)
+  }
 
-	return response.json()
+  return response.json()
 }
 
 export const api = {
-	get: async <T>(url: string, options?: RequestOptions): Promise<T> => {
-		return fetchApi<T>(url, {...options, method: 'GET'})
-	},
-	post: async <T>(url: string, body?: any, options?: RequestOptions): Promise<T> => {
-		return fetchApi<T>(url, {...options, method: 'POST', body})
-	},
-	put: async <T>(url: string, body?: any, options?: RequestOptions): Promise<T> => {
-		return fetchApi<T>(url, {...options, method: 'PUT', body})
-	},
-	patch: async <T>(url: string, body?: any, options?: RequestOptions): Promise<T> => {
-		return fetchApi<T>(url, {...options, method: 'PATCH', body})
-	},
-	delete: async <T>(url: string, options?: RequestOptions): Promise<T> => {
-		return fetchApi<T>(url, {...options, method: 'DELETE'})
-	}
+  get: async <T>(url: string, options?: RequestOptions): Promise<T> => {
+    return fetchApi<T>(url, { ...options, method: "GET" })
+  },
+  post: async <T>(
+    url: string,
+    body?: any,
+    options?: RequestOptions
+  ): Promise<T> => {
+    return fetchApi<T>(url, { ...options, method: "POST", body })
+  },
+  put: async <T>(
+    url: string,
+    body?: any,
+    options?: RequestOptions
+  ): Promise<T> => {
+    return fetchApi<T>(url, { ...options, method: "PUT", body })
+  },
+  patch: async <T>(
+    url: string,
+    body?: any,
+    options?: RequestOptions
+  ): Promise<T> => {
+    return fetchApi<T>(url, { ...options, method: "PATCH", body })
+  },
+  delete: async <T>(url: string, options?: RequestOptions): Promise<T> => {
+    return fetchApi<T>(url, { ...options, method: "DELETE" })
+  },
 }
 ```
 
@@ -269,13 +285,14 @@ import {api} from '@/lib/api-client'
 
 // Basic query hook
 export const useApiQuery = <T,>(options?: QueryOptions<T>) => {
-    return useQuery({
-        queryKey: [key],
-        queryFn: () => api.get<ApiResponse<T>>(endpoint).then((res) => res.data),
-        ...options,
-    })
+return useQuery({
+queryKey: [key],
+queryFn: () => api.get<ApiResponse<T>>(endpoint).then((res) => res.data),
+...options,
+})
 }
-```
+
+````
 
 ```tsx /hooks/useServerQuery.ts
 import {useQuery} from '@tanstack/react-query'
@@ -291,37 +308,37 @@ export const useServerQuery = <T>(
         ...options
     })
 }
-```
+````
 
 ```tsx /hooks/useInfiniteApiQuery.ts
-import {useInfiniteQuery} from '@tanstack/react-query'
-import {api} from '@/lib/api-client'
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { api } from "@/lib/api-client"
 
 export const useInfiniteApiQuery = () => {
-    return useInfiniteQuery({
-        queryKey: [key],
-        queryFn: async ({ pageParam = 1 }) => {
-            const response = await api.get<PaginatedResponse>("/");
-            return response.data;
-        },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage) => {
-            if (!lastPage.next) return undefined
-            const url = new URL(lastPage.next)
-            return url.searchParams.get("page")
-        }
-    })
-};
+  return useInfiniteQuery({
+    queryKey: [key],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await api.get<PaginatedResponse>("/")
+      return response.data
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.next) return undefined
+      const url = new URL(lastPage.next)
+      return url.searchParams.get("page")
+    },
+  })
+}
 ```
-</CodeGroup>
 
+</CodeGroup>
 
 #### Mutation Hooks
 
 ```typescript
 // hooks/useCustomMutation.ts
-import { useMutation, MutationOptions } from "@tanstack/react-query";
-import { api } from "../lib/api-client";
+import { useMutation, MutationOptions } from "@tanstack/react-query"
+import { api } from "../lib/api-client"
 
 export const useCustomMutation = <TData, TVariables>(
   options?: MutationOptions<TData, Error, TVariables>
@@ -334,36 +351,37 @@ export const useCustomMutation = <TData, TVariables>(
         data: variables,
       }),
     ...options,
-  });
-};
+  })
+}
 ```
 
 ### Server Actions Integration
 
 ```typescript
 // feature-tag/actions.ts
-"use server";
+"use server"
 
-import { api } from "@/lib/api/client";
-import { ApiResponse, User } from "@/types";
-import { revalidateTag } from "next/cache";
+import { api } from "@/lib/api/client"
+import { ApiResponse, User } from "@/types"
+import { revalidateTag } from "next/cache"
 
 export async function getUser(id: string): Promise<ApiResponse<User>> {
   try {
-    const response = await api.get<ApiResponse<User>>(`/api/users/${id}`);
-    revalidateTag(`user-${id}`);
-    return response.data;
+    const response = await api.get<ApiResponse<User>>(`/api/users/${id}`)
+    revalidateTag(`user-${id}`)
+    return response.data
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
 // Usage
 // hooks/queries/useUser.ts
 export function useUser(id: string) {
-  return useServerQuery(["user", id], () => getUser(id), {
-    enabled: !!id,
-  });
+  return useServerQuery({
+    queryKey: ["user", id],
+    queryFn: () => getUser(id),
+  })
 }
 ```
 
@@ -374,27 +392,27 @@ export function useUser(id: string) {
 const { isError, error, isLoadingError } = useQuery({
   queryKey: [""],
   queryFn: async () => 0,
-});
+})
 
 useEffect(() => {
   // handing error
-}, [error]);
+}, [error])
 
 // show different components
 if (isError) {
-  return <p>Error</p>;
+  return <p>Error</p>
 }
 if (isLoadingError) {
-  return <p>Error</p>;
+  return <p>Error</p>
 }
 
 // in mutations
 const customMutation = useMutation({
-  queryFn: () => {},
+  mutationFn: () => {},
   onError: () => {
     // error handing
   },
-});
+})
 ```
 
 ### Query Key Management
@@ -411,7 +429,7 @@ export const queryKeys = {
     all: ["posts"] as const,
     detail: (id: string) => ["posts", id] as const,
   },
-} as const;
+} as const
 ```
 
 ## Using Prefetched Data with Hydration
@@ -427,25 +445,30 @@ In Next.js page (`page.tsx`), fetch data on the server and use `dehydrate` to se
 
 ```tsx
 // app/page.tsx
-import { Hydrate, dehydrate } from "@tanstack/react-query";
-import { queryClient } from "@/components/providers/api-provider";
-import { fetchPokemonList } from "@/lib/actions";
-import PokemonList from "@/components/PokemonList";
+import {
+  HydrationBoundary,
+  dehydrate,
+  useQueryClient,
+} from "@tanstack/react-query"
+import { pokemonQueryOptions } from "@/lib/actions"
+import PokemonList from "@/components/PokemonList"
 
-export const revalidate = 0; // Disable ISR for simplicity
+export const revalidate = 0 // Disable ISR for simplicity
 
 export default async function HomePage() {
   // Prefetch data on the server
-  await queryClient.prefetchQuery(["pokemon"], fetchPokemonList);
+  const queryClient = useQueryClient()
+
+  await queryClient.prefetchQuery(pokemonQueryOptions)
 
   // Dehydrate the data
-  const dehydratedState = dehydrate(queryClient);
+  const dehydratedState = dehydrate(queryClient)
 
   return (
-    <Hydrate state={dehydratedState}>
+    <HydrationBoundary state={dehydratedState}>
       <PokemonList />
-    </Hydrate>
-  );
+    </HydrationBoundary>
+  )
 }
 ```
 
@@ -458,25 +481,43 @@ Create a utility to fetch data:
 "use server"
 
 export async function fetchPokemonList() {
-  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
-  if (!res.ok) throw new Error("Failed to fetch Pokémon data");
-  return res.json();
+  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20")
+  if (!res.ok) throw new Error("Failed to fetch Pokémon data")
+  return res.json()
 }
 ```
 
-In component, use `useQuery` to access the hydrated data:
+In custom hook, use `useQuery` to access the hydrated data:
+
+```tsx
+// feature-tag/queries.ts
+"use client"
+
+import { useQuery, queryOptions } from "@tanstack/react-query"
+import { fetchPokemonList } from "@/lib/features/pokemon/actions"
+
+export const pokemonQueryOptions = queryOptions({
+  queryKey: ["pokemon"],
+  queryFn: fetchPokemonList,
+})
+
+export default const usePokemonList = () => {
+  return useQuery(pokemonQueryOptions)
+}
+
+```
 
 ```tsx
 // app/components/PokemonList.tsx
-"use client";
+"use client"
 
-import { useQuery } from "@tanstack/react-query";
+import { usePokemonList } from "@/lib/features/pokemon/queries"
 
 export default function PokemonList() {
-  const { data, isLoading, isError } = useQuery(["pokemon"], fetchPokemonList);
+  const { data, isLoading, isError } = usePokemonList()
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error fetching Pokémon data</p>;
+  if (isLoading) return <p>Loading...</p>
+  if (isError) return <p>Error fetching Pokémon data</p>
 
   return (
     <ul className="space-y-2">
@@ -486,9 +527,124 @@ export default function PokemonList() {
         </li>
       ))}
     </ul>
-  );
+  )
 }
 ```
+
+## Optimistic Updates
+
+### 1: Make a Server Action
+
+
+```typescript
+// actions.ts
+"use server" // This is a server action
+
+import {api} from "@/lib/config/api-client"
+import {Experience, ExperienceMutation, ExperienceMutationSchema, ExperienceSchema} from "@/lib/experience/types"
+
+export const addExperienceToDB = async (experienceValues: ExperienceMutation): Promise<Experience> => {
+  const params = ExperienceMutationSchema.parse(experienceValues)
+  const data = await api.post<Experience>("/resume/base/experience/", params)
+  return ExperienceSchema.parse(data)
+};
+
+```
+
+### 2: Create a Custom Hook for Optimistic Updates
+
+```typescript
+// mutations.ts
+import {Experience, ExperienceMutation} from '@/lib/experience/types'
+import {MutationOptions, useMutation} from '@tanstack/react-query'
+import {deleteExperienceFromDB, addExperienceToDB} from '@/lib/experience/actions'
+
+export const useAddUserExperienceMutation = (options?: MutationOptions<Experience, Error, ExperienceMutation>) => useMutation(
+	{
+		mutationFn: addExperienceToDB,
+		...options // Open Close Principle - Open for extension, closed for modification
+	}
+)
+
+export const useDeleteExperienceMutation = (options?:MutationOptions<void, Error, string>) => useMutation({
+	mutationFn: (experienceId) => deleteExperienceFromDB(experienceId, 'base'),
+	...options
+})
+
+
+
+```
+### 3: Make Reuseable Query Options
+
+```tsx
+// queries.ts
+import {queryOptions, useQuery} from '@tanstack/react-query'
+import {EXPERIENCE_KEYS} from './keys' // 
+import {getExperiencesFromDB} from './actions'
+
+export const experienceQueryOptions = queryOptions({
+	queryKey: EXPERIENCE_KEYS,
+	queryFn: () => getExperiencesFromDB('base')
+})
+
+// not needed for optimistic updates
+export const useCurrentExperiences = () => useQuery(experienceQueryOptions)
+
+```
+
+### 3: Use the Hook in a Component
+
+```tsx
+'use client' // This is a client side component
+const queryClient = useQueryClient()
+
+
+// hook in action
+const {mutateAsync, isPending} = useAddUserExperienceMutation({
+  onMutate: async (newExperience) => {
+    // Cancel any outgoing re-fetches
+    // (so they don't overwrite our optimistic update)
+    await queryClient.cancelQueries(experienceQueryOptions)
+    
+    
+    // Snapshot the previous value
+    const prevExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
+    // Optimistically update to the new value
+    queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData:any) => oldData ? [...oldData, newExperience] : oldData)
+    // TODO remove this any the
+
+    // Return a context object with the snapshotted value
+    return {prevExperiences}
+  },
+  // If the mutation fails,
+  // use the context returned from onMutate to roll back
+  // TODO remove this any the
+  onError: (err, newExperience, context:any) => {
+    queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+    throw Error('Failed to add experience')
+  },
+  // Always refetch after error or success:
+  onSettled: () => {
+    queryClient.invalidateQueries(experienceQueryOptions)
+  }
+})
+
+
+// handle mutation
+const handleSubmit = async (values: ExperienceMutation) => {
+  try {
+    await mutateAsync(values)
+  } catch (error) {
+    toast.error('Failed to add experience')
+  }
+}
+```
+
+
+
+
+
+
 
 For more details, refer to the following links.
 
