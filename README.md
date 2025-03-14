@@ -1,32 +1,56 @@
-# Mintlify Starter Kit
+# Letraz Internal Documentation
 
-Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
+[![Documentation Version](https://img.shields.io/badge/Documentation%20Version-0.0.3-orange)](https://docs.letraz.app)
 
-- Guide pages
-- Navigation
-- Customizations
-- API Reference pages
-- Use of popular components
+Welcome to the internal documentation of Letraz. Although it's called "internal," it's open to the public in alignment with our motto of transparency. This documentation serves as the primary reference for the Letraz core team and provides insights for anyone interested in the Letraz ecosystem.
 
-### Development
+## About Letraz
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
+Letraz is an open-source platform focused on resume generation and job application management. The platform consists of:
 
-```
-npm i -g mintlify
-```
+- **Frontend (Next.js)**: The user-facing web application
+- **Backend (Django)**: The API server and data management system
+- **Utils (Django + Celery)**: Utility functions and background job processing
+- **Admin Panel (Next.js)**: Internal administration dashboard
+- **Documentation (Mintlify)**: This documentation repository
 
-Run the following command at the root of your documentation (where mint.json is)
+## Documentation Overview
 
-```
-mintlify dev
-```
+This documentation covers:
 
-### Publishing Changes
+- Development setup guides
+- Architecture and database schema
+- API references
+- Guidelines and best practices
+- Product requirements and roadmap
 
-Install our Github App to auto propagate changes from your repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard. 
+## Local Development Setup
 
-#### Troubleshooting
+To run this documentation locally:
 
-- Mintlify dev isn't running - Run `mintlify install` it'll re-install dependencies.
-- Page loads as a 404 - Make sure you are running in a folder with `mint.json`
+1. Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify):
+   ```
+   npm i -g mintlify
+   ```
+
+2. Run the following command at the root of this documentation (where mint.json is):
+   ```
+   mintlify dev
+   ```
+
+3. Visit [http://localhost:3000](http://localhost:3000) in your browser
+
+## Contributing
+
+If you have suggestions or want to contribute to the documentation:
+- Open an issue in the [GitHub repository](https://github.com/LetrazApp/letraz-internal-docs)
+- If you're part of the core team, you can also ping the team in the Discord server
+
+## Links
+
+- [Live Documentation](https://docs.letraz.app)
+- [Admin Panel](https://admin.letraz.app)
+- [Frontend](https://letraz.app)
+- [API](https://api.letraz.app)
+- [GitHub](https://github.com/pingSubhajit/letraz)
+- [Discord](https://discord.gg/letraz)
