@@ -197,6 +197,18 @@ paths:
         required: true
       tags:
       - Education object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationUpsert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EducationUpsert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EducationUpsert'
+        required: true
       security:
       - basicAuth: []
       - cookieAuth: []
@@ -234,6 +246,55 @@ paths:
         required: true
       tags:
       - Education object
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationFull'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    patch:
+      operationId: resume_education_partial_update
+      description: |-
+        Updates an existing education entry from the user's resume as specified in the resume id.
+        If a base is provided as the resume_id, the education is updated in the base resume.
+      summary: Update an education
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        description: Education ID of the education you want to update
+        required: true
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base educations, just put `base` in here
+        required: true
+      tags:
+      - Education object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEducationUpsert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEducationUpsert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEducationUpsert'
       security:
       - basicAuth: []
       - cookieAuth: []
@@ -332,6 +393,18 @@ paths:
         required: true
       tags:
       - Experience object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExperienceUpsert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ExperienceUpsert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ExperienceUpsert'
+        required: true
       security:
       - basicAuth: []
       - cookieAuth: []
@@ -385,6 +458,55 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
+    patch:
+      operationId: resume_experience_partial_update
+      description: |-
+        Updates an existing experience in the user's resume as specified in the resume id.
+        If a base is provided as the resume_id, the experience is updated in the base resume.
+      summary: Update an experience
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        description: Experience ID of the experience you want to update
+        required: true
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base educations, just put `base` in here
+        required: true
+      tags:
+      - Experience object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedExperienceUpsert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedExperienceUpsert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedExperienceUpsert'
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExperienceFull'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
     delete:
       operationId: resume_experience_destroy
       description: Deletes an experience from the user's resume as specified in the
@@ -418,22 +540,184 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
-  /resume/{resume_id}/skill/:
+  /resume/{resume_id}/project/:
     get:
-      operationId: resume_skill_list
-      description: Gives all skill for the Resume id or base if `base`  is provided
+      operationId: resume_project_list
+      description: Gives all projects for the Resume id or base if `base`  is provided
         as resume id
-      summary: Get all skill of the resume
+      summary: Get all projects
       parameters:
       - in: path
         name: resume_id
         schema:
           type: string
         description: Resume ID of the resume the education belongs to. If you want
-          to interact with the base educations, just put `base` in here
+          to interact with the base project, just put `base` in here
         required: true
       tags:
-      - Resume Skill object
+      - Project object
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    post:
+      operationId: resume_project_create
+      description: |-
+        Adds a new project to the user's resume as specified in the resume id.
+        If a `base` is provided as resume id, the Project is added to the base resume.
+      summary: Create a new project
+      parameters:
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base project, just put `base` in here
+        required: true
+      tags:
+      - Project object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpsert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProjectUpsert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectUpsert'
+        required: true
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /resume/{resume_id}/project/{id}/:
+    patch:
+      operationId: resume_project_partial_update
+      description: |-
+        Updates an existing project of the user's resume as specified in the resume id.
+        If a `base` is provided as resume id, the Project is added to the base resume.
+      summary: Update a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        description: ID of the project that you want to update
+        required: true
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base project, just put `base` in here
+        required: true
+      tags:
+      - Project object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectUpsert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectUpsert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectUpsert'
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    delete:
+      operationId: resume_project_destroy
+      description: |-
+        Delete an existing project of the user's resume as specified in the resume id.
+        If a `base` is provided as resume id, the Project is added to the base resume.
+      summary: Delete a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        description: ID of the project that you want to delete
+        required: true
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base project, just put `base` in here
+        required: true
+      tags:
+      - Project object
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /resume/{resume_id}/skill/:
+    get:
+      operationId: resume_skill_list
+      description: Gives all skill for the Resume id or base if `base`  is provided
+        as resume id
+      summary: Get all skills of resume
+      parameters:
+      - in: path
+        name: resume_id
+        schema:
+          type: string
+        description: Resume ID of the resume the education belongs to. If you want
+          to interact with the base Skill, just put `base` in here
+        required: true
+      tags:
+      - Skill object
       security:
       - basicAuth: []
       - cookieAuth: []
@@ -456,18 +740,30 @@ paths:
       operationId: resume_skill_create
       description: |-
         Adds a new Skill to the user's resume as specified in the resume id.
-        If a base resume id is provided, the Skill is added to the base resume.
-      summary: Add a new Skill to resume
+        If a `base` is provided as resume id, the Skill is added to the base resume.
+      summary: Add a new skill
       parameters:
       - in: path
         name: resume_id
         schema:
           type: string
         description: Resume ID of the resume the education belongs to. If you want
-          to interact with the base educations, just put `base` in here
+          to interact with the base Skill, just put `base` in here
         required: true
       tags:
-      - Resume Skill object
+      - Skill object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResumeSkillUpsert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResumeSkillUpsert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResumeSkillUpsert'
+        required: true
       security:
       - basicAuth: []
       - cookieAuth: []
@@ -490,7 +786,7 @@ paths:
       description: |-
         Update an existing Skill-proficiency to the user's resume as specified in the resume id.
         If a base resume id is provided, the Skill is updated for the base resume.
-      summary: Update an existing Skill to resume
+      summary: Update an existing skill
       parameters:
       - in: path
         name: id
@@ -503,10 +799,10 @@ paths:
         schema:
           type: string
         description: Resume ID of the resume the education belongs to. If you want
-          to interact with the base educations, just put `base` in here
+          to interact with the base Skill, just put `base` in here
         required: true
       tags:
-      - Resume Skill object
+      - Skill object
       security:
       - basicAuth: []
       - cookieAuth: []
@@ -540,10 +836,10 @@ paths:
         schema:
           type: string
         description: Resume ID of the resume the education belongs to. If you want
-          to interact with the base educations, just put `base` in here
+          to interact with the base Skill, just put `base` in here
         required: true
       tags:
-      - Resume Skill object
+      - Skill object
       security:
       - basicAuth: []
       - cookieAuth: []
@@ -567,10 +863,10 @@ paths:
         schema:
           type: string
         description: Resume ID of the resume the education belongs to. If you want
-          to interact with the base educations, just put `base` in here
+          to interact with the base Skill, just put `base` in here
         required: true
       tags:
-      - Resume Skill object
+      - Skill object
       security:
       - basicAuth: []
       - cookieAuth: []
@@ -595,7 +891,7 @@ paths:
       description: Get all skills available in the database across users and resumes
       summary: Get all global skills
       tags:
-      - Resume Skill object
+      - Skill object
       responses:
         '200':
           content:
@@ -810,32 +1106,28 @@ components:
           readOnly: true
         started_from_month:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
+          maximum: 12
+          minimum: 1
           nullable: true
-          description: The month the user started studying. (optional)
+          description: Month when the education started (1-12).
         started_from_year:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
+          maximum: 2100
+          minimum: 1900
           nullable: true
-          description: The year the user started studying. (optional)
+          description: Year when the education started (YYYY).
         finished_at_month:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
+          maximum: 12
+          minimum: 1
           nullable: true
-          description: The month the user finished studying. (optional)
+          description: Month when the education was completed (1-12).
         finished_at_year:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
+          maximum: 2100
+          minimum: 1900
           nullable: true
-          description: The year the user finished studying. (optional)
+          description: Year when the education was completed (YYYY).
         current:
           type: boolean
           description: 'Whether the user is currently studying. default: False'
@@ -858,6 +1150,90 @@ components:
           description: The date and time the education entry was last updated.
       required:
       - country
+      - created_at
+      - field_of_study
+      - id
+      - institution_name
+      - resume_section
+      - updated_at
+      - user
+    EducationUpsert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The unique identifier for the education entry.
+        institution_name:
+          type: string
+          description: The name of the institution the user studied at.
+          maxLength: 250
+        field_of_study:
+          type: string
+          description: The field of study the user studied.
+          maxLength: 250
+        degree:
+          type: string
+          nullable: true
+          description: The degree the user obtained. (optional)
+          maxLength: 250
+        started_from_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the education started (1-12).
+        started_from_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the education started (YYYY).
+        finished_at_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the education was completed (1-12).
+        finished_at_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the education was completed (YYYY).
+        current:
+          type: boolean
+          description: 'Whether the user is currently studying. default: False'
+        description:
+          type: string
+          nullable: true
+          description: The description of the education entry. User can provide any
+            kind of description for that user. Usually in HTML format to support rich
+            text. (optional)
+          maxLength: 3000
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the education entry was created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the education entry was last updated.
+        user:
+          type: string
+          description: The user who the education entry belongs to.
+        resume_section:
+          type: string
+          format: uuid
+          description: The resume section the education entry belongs to.
+        country:
+          type: string
+          description: The country the institution is located in. (optional)
+          nullable: true
+      required:
       - created_at
       - field_of_study
       - id
@@ -951,32 +1327,28 @@ components:
           readOnly: true
         started_from_month:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
+          maximum: 12
+          minimum: 1
           nullable: true
-          description: The month the user started working.
+          description: Month when the experience started (1-12).
         started_from_year:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
+          maximum: 2100
+          minimum: 1900
           nullable: true
-          description: The year the user started working.
+          description: Year when the experience started (YYYY).
         finished_at_month:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
+          maximum: 12
+          minimum: 1
           nullable: true
-          description: The month the user finished working. (optional)
+          description: Month when the experience was completed (1-12).
         finished_at_year:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
+          maximum: 2100
+          minimum: 1900
           nullable: true
-          description: The year the user finished working. (optional)
+          description: Year when the experience was completed (YYYY).
         current:
           type: boolean
           description: 'Whether the user is currently working. default: False'
@@ -1000,6 +1372,114 @@ components:
       required:
       - company_name
       - country
+      - created_at
+      - employment_type
+      - id
+      - job_title
+      - resume_section
+      - updated_at
+      - user
+    ExperienceUpsert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The unique identifier for the experience entry.
+        company_name:
+          type: string
+          description: The name of the company the user worked at.
+          maxLength: 250
+        job_title:
+          type: string
+          description: The title of the job the user had.
+          maxLength: 250
+        employment_type:
+          enum:
+          - flt
+          - prt
+          - con
+          - int
+          - fre
+          - sel
+          - vol
+          - tra
+          type: string
+          x-spec-enum-id: 35057d0cc661fae0
+          description: |-
+            The type of employment the user had. Can be Full Time, Part Time, Contract, Internship, Freelance, Self Employed, Volunteer or Trainee.
+
+            * `flt` - Full Time
+            * `prt` - Part Time
+            * `con` - Contract
+            * `int` - Internship
+            * `fre` - Freelance
+            * `sel` - Self Employed
+            * `vol` - Volunteer
+            * `tra` - Trainee
+        city:
+          type: string
+          nullable: true
+          description: The city the company is located in. (optional)
+          maxLength: 50
+        started_from_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the experience started (1-12).
+        started_from_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the experience started (YYYY).
+        finished_at_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the experience was completed (1-12).
+        finished_at_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the experience was completed (YYYY).
+        current:
+          type: boolean
+          description: 'Whether the user is currently working. default: False'
+        description:
+          type: string
+          nullable: true
+          description: The description of the experience entry. User can provide any
+            kind of description for that user. Usually in HTML format to support rich
+            text. (optional)
+          maxLength: 3000
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the experience entry was created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the experience entry was last updated.
+        user:
+          type: string
+          description: The user who the experience entry belongs to.
+        resume_section:
+          type: string
+          format: uuid
+          description: The unique identifier for the resume section entry.
+        country:
+          type: string
+          description: The country the company is located in. (optional)
+          nullable: true
+      required:
+      - company_name
       - created_at
       - employment_type
       - id
@@ -1139,6 +1619,263 @@ components:
       - company_name
       - id
       - title
+    PatchedEducationUpsert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The unique identifier for the education entry.
+        institution_name:
+          type: string
+          description: The name of the institution the user studied at.
+          maxLength: 250
+        field_of_study:
+          type: string
+          description: The field of study the user studied.
+          maxLength: 250
+        degree:
+          type: string
+          nullable: true
+          description: The degree the user obtained. (optional)
+          maxLength: 250
+        started_from_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the education started (1-12).
+        started_from_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the education started (YYYY).
+        finished_at_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the education was completed (1-12).
+        finished_at_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the education was completed (YYYY).
+        current:
+          type: boolean
+          description: 'Whether the user is currently studying. default: False'
+        description:
+          type: string
+          nullable: true
+          description: The description of the education entry. User can provide any
+            kind of description for that user. Usually in HTML format to support rich
+            text. (optional)
+          maxLength: 3000
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the education entry was created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the education entry was last updated.
+        user:
+          type: string
+          description: The user who the education entry belongs to.
+        resume_section:
+          type: string
+          format: uuid
+          description: The resume section the education entry belongs to.
+        country:
+          type: string
+          description: The country the institution is located in. (optional)
+          nullable: true
+    PatchedExperienceUpsert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The unique identifier for the experience entry.
+        company_name:
+          type: string
+          description: The name of the company the user worked at.
+          maxLength: 250
+        job_title:
+          type: string
+          description: The title of the job the user had.
+          maxLength: 250
+        employment_type:
+          enum:
+          - flt
+          - prt
+          - con
+          - int
+          - fre
+          - sel
+          - vol
+          - tra
+          type: string
+          x-spec-enum-id: 35057d0cc661fae0
+          description: |-
+            The type of employment the user had. Can be Full Time, Part Time, Contract, Internship, Freelance, Self Employed, Volunteer or Trainee.
+
+            * `flt` - Full Time
+            * `prt` - Part Time
+            * `con` - Contract
+            * `int` - Internship
+            * `fre` - Freelance
+            * `sel` - Self Employed
+            * `vol` - Volunteer
+            * `tra` - Trainee
+        city:
+          type: string
+          nullable: true
+          description: The city the company is located in. (optional)
+          maxLength: 50
+        started_from_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the experience started (1-12).
+        started_from_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the experience started (YYYY).
+        finished_at_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the experience was completed (1-12).
+        finished_at_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the experience was completed (YYYY).
+        current:
+          type: boolean
+          description: 'Whether the user is currently working. default: False'
+        description:
+          type: string
+          nullable: true
+          description: The description of the experience entry. User can provide any
+            kind of description for that user. Usually in HTML format to support rich
+            text. (optional)
+          maxLength: 3000
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the experience entry was created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time the experience entry was last updated.
+        user:
+          type: string
+          description: The user who the experience entry belongs to.
+        resume_section:
+          type: string
+          format: uuid
+          description: The unique identifier for the resume section entry.
+        country:
+          type: string
+          description: The country the company is located in. (optional)
+          nullable: true
+    PatchedProjectUpsert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Unique identifier for the project
+        skills_used:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillUpsert'
+        category:
+          type: string
+          nullable: true
+          description: Category or type of the project (e.g., Web Development, Mobile
+            App).
+          maxLength: 255
+        name:
+          type: string
+          description: Name of the project.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Detailed description of the project and its objectives.
+        role:
+          type: string
+          nullable: true
+          description: Your role or position in this project (e.g., Lead Developer,
+            UI Designer).
+          maxLength: 255
+        github_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Link to the project's GitHub repository.
+          maxLength: 200
+        live_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Link to the live/deployed version of the project.
+          maxLength: 200
+        started_from_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the project started (1-12).
+        started_from_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the project started (YYYY).
+        finished_at_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the project was completed (1-12).
+        finished_at_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the project was completed (YYYY).
+        current:
+          type: boolean
+          nullable: true
+          description: Indicates if this is a current/ongoing project.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the project was first created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the project was last updated.
     PatchedUserUpsert:
       type: object
       properties:
@@ -1275,6 +2012,189 @@ components:
       - id
       - resume_section
       - skill
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Unique identifier for the project
+        skills_used:
+          type: array
+          items:
+            $ref: '#/components/schemas/Skill'
+        resume_section:
+          $ref: '#/components/schemas/ResumeSectionShort'
+        category:
+          type: string
+          nullable: true
+          description: Category or type of the project (e.g., Web Development, Mobile
+            App).
+          maxLength: 255
+        name:
+          type: string
+          description: Name of the project.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Detailed description of the project and its objectives.
+        role:
+          type: string
+          nullable: true
+          description: Your role or position in this project (e.g., Lead Developer,
+            UI Designer).
+          maxLength: 255
+        github_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Link to the project's GitHub repository.
+          maxLength: 200
+        live_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Link to the live/deployed version of the project.
+          maxLength: 200
+        started_from_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the project started (1-12).
+        started_from_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the project started (YYYY).
+        finished_at_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the project was completed (1-12).
+        finished_at_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the project was completed (YYYY).
+        current:
+          type: boolean
+          nullable: true
+          description: Indicates if this is a current/ongoing project.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the project was first created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the project was last updated.
+        user:
+          type: string
+          description: The user who owns this project
+      required:
+      - created_at
+      - id
+      - name
+      - resume_section
+      - skills_used
+      - updated_at
+      - user
+    ProjectUpsert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Unique identifier for the project
+        skills_used:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillUpsert'
+        category:
+          type: string
+          nullable: true
+          description: Category or type of the project (e.g., Web Development, Mobile
+            App).
+          maxLength: 255
+        name:
+          type: string
+          description: Name of the project.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Detailed description of the project and its objectives.
+        role:
+          type: string
+          nullable: true
+          description: Your role or position in this project (e.g., Lead Developer,
+            UI Designer).
+          maxLength: 255
+        github_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Link to the project's GitHub repository.
+          maxLength: 200
+        live_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Link to the live/deployed version of the project.
+          maxLength: 200
+        started_from_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the project started (1-12).
+        started_from_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the project started (YYYY).
+        finished_at_month:
+          type: integer
+          maximum: 12
+          minimum: 1
+          nullable: true
+          description: Month when the project was completed (1-12).
+        finished_at_year:
+          type: integer
+          maximum: 2100
+          minimum: 1900
+          nullable: true
+          description: Year when the project was completed (YYYY).
+        current:
+          type: boolean
+          nullable: true
+          description: Indicates if this is a current/ongoing project.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the project was first created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the project was last updated.
+      required:
+      - created_at
+      - id
+      - name
+      - skills_used
+      - updated_at
     ResumeFull:
       type: object
       properties:
@@ -1301,6 +2221,32 @@ components:
       - job
       - sections
       - user
+    ResumeSectionShort:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The unique identifier for the resume section entry.
+        resume:
+          type: string
+          description: The resume the section belongs to.
+        index:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          description: The index of the section in the resume. This number determines
+            the position of the section in the resume. (0-based)
+        type:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - index
+      - resume
+      - type
     ResumeShort:
       type: object
       properties:
@@ -1323,6 +2269,34 @@ components:
       - id
       - job
       - user
+    ResumeSkillUpsert:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the skill.
+        category:
+          type: string
+          description: The category of the skill.
+        level:
+          enum:
+          - BEG
+          - INT
+          - ADV
+          - EXP
+          type: string
+          x-spec-enum-id: 0b41a707f07a9295
+          description: |-
+            The proficiency level of the skill.
+
+            * `BEG` - Beginner
+            * `INT` - Intermediate
+            * `ADV` - Advanced
+            * `EXP` - Expert
+      required:
+      - category
+      - level
+      - name
     Skill:
       type: object
       properties:
@@ -1363,6 +2337,18 @@ components:
       - id
       - name
       - updated_at
+    SkillUpsert:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the skill.
+        category:
+          type: string
+          description: The category of the skill.
+      required:
+      - category
+      - name
     User:
       type: object
       properties:

@@ -98,6 +98,7 @@
             "api-reference/education-object/get-all-educations",
             "api-reference/education-object/get-education-by-id",
             "api-reference/education-object/add-a-new-education",
+            "api-reference/education-object/update-an-education",
             "api-reference/education-object/delete-an-education"
           ]
         },
@@ -107,6 +108,7 @@
             "api-reference/experience-object/get-all-experiences",
             "api-reference/experience-object/get-experience-by-id",
             "api-reference/experience-object/create-a-new-experience",
+            "api-reference/experience-object/update-an-experience",
             "api-reference/experience-object/delete-an-experience"
           ]
         },
@@ -119,6 +121,15 @@
             "api-reference/resume-skill-object/add-a-new-skill-to-resume",
             "api-reference/resume-skill-object/update-an-existing-skill-to-resume",
             "api-reference/resume-skill-object/remove-skill-from-resume"
+          ]
+        },
+        {
+          "group": "Project object",
+          "pages": [
+            "api-reference/project-object/get-all-projects",
+            "api-reference/project-object/create-a-new-project",
+            "api-reference/project-object/update-a-project",
+            "api-reference/project-object/delete-a-project"
           ]
         },
         {
