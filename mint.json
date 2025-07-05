@@ -86,18 +86,35 @@
           ]
         },
         {
+          "group": "Job object",
+          "pages": [
+            "api-reference/job-object/get-job-by-job-id"
+          ]
+        },
+        {
           "group": "Resume object",
           "pages": [
             "api-reference/resume-object/get-all-resume",
-            "api-reference/resume-object/get-resume-by-id"
+            "api-reference/resume-object/get-resume-by-id",
+            "api-reference/resume-object/rearrange-resume-sections"
+          ]
+        },
+        {
+          "group": "Certification object",
+          "pages": [
+            "api-reference/certification-object/get-all-certifications",
+            "api-reference/certification-object/create-a-new-certification",
+            "api-reference/certification-object/get-certification-by-id",
+            "api-reference/certification-object/update-a-certification",
+            "api-reference/certification-object/delete-a-certification"
           ]
         },
         {
           "group": "Education object",
           "pages": [
             "api-reference/education-object/get-all-educations",
-            "api-reference/education-object/get-education-by-id",
             "api-reference/education-object/add-a-new-education",
+            "api-reference/education-object/get-education-by-id",
             "api-reference/education-object/update-an-education",
             "api-reference/education-object/delete-an-education"
           ]
@@ -106,21 +123,10 @@
           "group": "Experience object",
           "pages": [
             "api-reference/experience-object/get-all-experiences",
-            "api-reference/experience-object/get-experience-by-id",
             "api-reference/experience-object/create-a-new-experience",
+            "api-reference/experience-object/get-experience-by-id",
             "api-reference/experience-object/update-an-experience",
             "api-reference/experience-object/delete-an-experience"
-          ]
-        },
-        {
-          "group": "Skill object",
-          "pages": [
-            "api-reference/resume-skill-object/get-all-global-skills",
-            "api-reference/resume-skill-object/get-all-skill-of-the-resume",
-            "api-reference/resume-skill-object/get-all-skill-category-for-the-resume",
-            "api-reference/resume-skill-object/add-a-new-skill-to-resume",
-            "api-reference/resume-skill-object/update-an-existing-skill-to-resume",
-            "api-reference/resume-skill-object/remove-skill-from-resume"
           ]
         },
         {
@@ -133,9 +139,15 @@
           ]
         },
         {
-          "group": "Job",
+          "group": "Skill object",
           "pages": [
-            "api-reference/job-object/get-job-by-job-id"
+            "api-reference/skill-object/get-all-global-skills",
+            "api-reference/skill-object/get-all-global-skill-categories",
+            "api-reference/skill-object/get-all-skills-of-resume",
+            "api-reference/skill-object/get-all-skill-category-for-the-resume",
+            "api-reference/skill-object/add-a-new-skill",
+            "api-reference/skill-object/update-an-existing-skill",
+            "api-reference/skill-object/remove-skill-from-resume"
           ]
         }
       ]
