@@ -19,6 +19,14 @@ paths:
         name: resume_id
         schema:
           type: string
+          format: uuid
+        description: The unique identifier of the resume to retrieve
+        required: true
+      - in: header
+        name: x-admin-api-key
+        schema:
+          type: string
+        description: Admin API key for authentication
         required: true
       tags:
       - Admin - Resume
@@ -33,19 +41,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
         '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /admin/waitlist/:
     get:
@@ -53,6 +61,13 @@ paths:
       description: Returns all waitlist entries ordered by waiting number. Requires
         admin API key authentication.
       summary: '[ADMIN] Get all waitlists'
+      parameters:
+      - in: header
+        name: x-admin-api-key
+        schema:
+          type: string
+        description: Admin API key for authentication
+        required: true
       tags:
       - Admin - Waitlist
       responses:
@@ -68,13 +83,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /admin/waitlist/{waitlist_id}/:
     post:
@@ -88,6 +109,13 @@ paths:
         schema:
           type: string
           format: uuid
+        description: The Waitlist ID to update
+        required: true
+      - in: header
+        name: x-admin-api-key
+        schema:
+          type: string
+        description: Admin API key for authentication
         required: true
       tags:
       - Admin - Waitlist
@@ -104,6 +132,7 @@ paths:
               $ref: '#/components/schemas/WaitlistUpdate'
       security:
       - basicAuth: []
+      - cookieAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -117,19 +146,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
         '401':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
-        '404':
+        '503':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /admin/waitlist/bulk-update/:
     post:
@@ -137,6 +166,13 @@ paths:
       description: Update multiple waitlist entries at once. Currently supports updating
         the has_access field for multiple users. Requires admin API key authentication.
       summary: '[ADMIN] Bulk update waitlist entries'
+      parameters:
+      - in: header
+        name: x-admin-api-key
+        schema:
+          type: string
+        description: Admin API key for authentication
+        required: true
       tags:
       - Admin - Waitlist
       requestBody:
@@ -154,27 +190,32 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Waitlist'
+                $ref: '#/components/schemas/WaitlistBulkUpdateResponse'
           description: ''
         '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
         '401':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /error-example/:
     get:
@@ -186,11 +227,11 @@ paths:
       tags:
       - Core APIs
       responses:
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /error-list-example/:
     get:
@@ -202,11 +243,11 @@ paths:
       tags:
       - Core APIs
       responses:
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorList'
+                $ref: '#/components/schemas/ErrorListEnvelope'
           description: ''
   /health/:
     get:
@@ -223,11 +264,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/HealthCheck'
           description: ''
-        '500':
+        '503':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/HealthCheck'
           description: ''
   /job/{job_id}/:
     get:
@@ -240,11 +281,13 @@ paths:
         name: job_id
         schema:
           type: string
+        description: The Job ID
         required: true
       tags:
       - Job object
       security:
       - basicAuth: []
+      - cookieAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -254,11 +297,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/JobFull'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/:
     get:
@@ -271,6 +314,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -280,11 +324,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/ResumeShort'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{id}/:
     get:
@@ -297,12 +341,18 @@ paths:
         name: id
         schema:
           type: string
+        required: true
+      - in: path
+        name: pk
+        schema:
+          type: string
         description: Resume ID
         required: true
       tags:
       - Resume object
       security:
       - basicAuth: []
+      - cookieAuth: []
       - cookieAuth: []
       responses:
         '200':
@@ -311,11 +361,71 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResumeFull'
           description: ''
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+    put:
+      operationId: resume_update
+      description: Replace all sections of a resume with the provided ordered list
+        of sections.
+      summary: Replace resume sections
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
+        schema:
+          type: string
+        description: Resume ID
+        required: true
+      tags:
+      - Resume object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResumeReplace'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResumeReplace'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResumeReplace'
+        required: true
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeFull'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{id}/sections/rearrange/:
     put:
@@ -346,6 +456,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -357,19 +468,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
         '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/certification/:
     get:
@@ -391,6 +496,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -400,11 +506,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/Certification'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     post:
       operationId: resume_certification_create
@@ -438,6 +550,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '201':
           content:
@@ -445,11 +558,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Certification'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/certification/{id}/:
     get:
@@ -462,7 +575,12 @@ paths:
         name: id
         schema:
           type: string
-        description: Resume ID
+        required: true
+      - in: path
+        name: pk
+        schema:
+          type: string
+        description: Certification ID
         required: true
       - in: path
         name: resume_id
@@ -477,6 +595,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -484,11 +603,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Certification'
           description: ''
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     patch:
       operationId: resume_certification_partial_update
@@ -499,6 +624,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: ID of the certification that you want to update
@@ -527,6 +657,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -534,11 +665,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Certification'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     delete:
       operationId: resume_certification_destroy
@@ -549,6 +686,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: ID of the certification that you want to delete
@@ -566,14 +708,21 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
-        '200':
+        '204':
           description: No response body
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/education/:
     get:
@@ -593,6 +742,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -602,11 +752,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/EducationFull'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     post:
       operationId: resume_education_create
@@ -639,18 +795,19 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
-        '200':
+        '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EducationFull'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/education/{id}/:
     get:
@@ -660,6 +817,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: Education ID of the education you want to retrieve
@@ -676,6 +838,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -683,11 +846,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/EducationFull'
           description: ''
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     patch:
       operationId: resume_education_partial_update
@@ -698,6 +867,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: Education ID of the education you want to update
@@ -725,6 +899,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -732,11 +907,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/EducationFull'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     delete:
       operationId: resume_education_destroy
@@ -746,6 +927,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: Education ID of the education you want to delete
@@ -762,14 +948,21 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '204':
           description: No response body
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/experience/:
     get:
@@ -789,6 +982,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -798,11 +992,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/ExperienceFull'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     post:
       operationId: resume_experience_create
@@ -835,6 +1035,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '201':
           content:
@@ -842,11 +1043,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExperienceFull'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/experience/{id}/:
     get:
@@ -856,6 +1057,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: Experience ID of the experience you want to retrieve
@@ -872,6 +1078,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -879,11 +1086,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExperienceFull'
           description: ''
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     patch:
       operationId: resume_experience_partial_update
@@ -894,6 +1107,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: Experience ID of the experience you want to update
@@ -921,6 +1139,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -928,11 +1147,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExperienceFull'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     delete:
       operationId: resume_experience_destroy
@@ -942,6 +1167,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: Experience ID of the experience you want to delete
@@ -958,14 +1188,21 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '204':
           description: No response body
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/project/:
     get:
@@ -986,6 +1223,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -995,11 +1233,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/Project'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     post:
       operationId: resume_project_create
@@ -1032,6 +1276,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '201':
           content:
@@ -1039,11 +1284,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Project'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/project/{id}/:
     patch:
@@ -1055,6 +1300,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: ID of the project that you want to update
@@ -1082,6 +1332,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -1089,11 +1340,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Project'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     delete:
       operationId: resume_project_destroy
@@ -1104,6 +1361,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: ID of the project that you want to delete
@@ -1120,14 +1382,21 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
-        '200':
+        '204':
           description: No response body
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/skill/:
     get:
@@ -1148,6 +1417,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -1157,11 +1427,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/Proficiency'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     post:
       operationId: resume_skill_create
@@ -1194,18 +1470,19 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Proficiency'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/skill/{id}/:
     patch:
@@ -1219,7 +1496,12 @@ paths:
         name: id
         schema:
           type: string
-        description: ID of the Skill-proficiency you want to delete for the resume
+        required: true
+      - in: path
+        name: pk
+        schema:
+          type: string
+        description: ID of the Skill-proficiency you want to update for the resume
         required: true
       - in: path
         name: resume_id
@@ -1244,6 +1526,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -1251,11 +1534,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Proficiency'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     delete:
       operationId: resume_skill_destroy
@@ -1265,6 +1554,11 @@ paths:
       parameters:
       - in: path
         name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: pk
         schema:
           type: string
         description: ID of the Skill-proficiency you want to delete for the resume
@@ -1281,14 +1575,21 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '204':
           description: No response body
-        '500':
+        '404':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/{resume_id}/skill/categories/:
     get:
@@ -1308,6 +1609,7 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -1317,11 +1619,17 @@ paths:
                 items:
                   type: string
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /resume/tailor/:
     post:
@@ -1330,8 +1638,31 @@ paths:
       summary: Start resume tailoring process
       tags:
       - Resume object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TailorRequest'
+            examples:
+              URLTarget:
+                value:
+                  target: https://company.example/jobs/1234-senior-engineer
+                summary: Tailor using a job URL
+              DescriptionTarget:
+                value:
+                  target: We are seeking a senior backend engineer with Python, Django,
+                    PostgreSQL...
+                summary: Tailor using long job description
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TailorRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TailorRequest'
+        required: true
       security:
       - basicAuth: []
+      - cookieAuth: []
       - cookieAuth: []
       responses:
         '200':
@@ -1344,7 +1675,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /skill/:
     get:
@@ -1366,7 +1703,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /skill/categories/:
     get:
@@ -1388,18 +1725,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /user/:
     get:
       operationId: user_retrieve
       description: Returns a user's user info by the user's id. If the user info is
         not found, a 404 error is returned.
-      summary: Get user info
+      summary: Get current user info
       tags:
       - User
       security:
       - basicAuth: []
+      - cookieAuth: []
       - cookieAuth: []
       responses:
         '200':
@@ -1412,14 +1750,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     patch:
       operationId: user_partial_update
       description: |-
         Send a PATCH request with the user's data to add or upsert a user info entry.
         If the user info already exists, it will be updated. If the user info does not exist, it will be created.
-      summary: Add a new user info
+      summary: Update current user info
       tags:
       - User
       requestBody:
@@ -1436,8 +1774,9 @@ paths:
       security:
       - basicAuth: []
       - cookieAuth: []
+      - cookieAuth: []
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
@@ -1447,7 +1786,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
   /waitlist/:
     get:
@@ -1466,11 +1811,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Waitlist'
           description: ''
-        '500':
+        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
     post:
       operationId: waitlist_create
@@ -1504,7 +1849,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorEnvelope'
           description: ''
 components:
   schemas:
@@ -1741,9 +2086,6 @@ components:
         id:
           type: string
           readOnly: true
-        resume_section:
-          type: string
-          readOnly: true
         institution_name:
           type: string
           description: The name of the institution the user studied at.
@@ -1804,6 +2146,10 @@ components:
         user:
           type: string
           description: The user who the education entry belongs to.
+        resume_section:
+          type: string
+          format: uuid
+          description: The resume section the education entry belongs to.
         country:
           type: string
           description: The country the institution is located in. (optional)
@@ -1847,21 +2193,24 @@ components:
       - extra
       - message
       - uuid
-    ErrorList:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+      required:
+      - error
+    ErrorListEnvelope:
       type: object
       properties:
         code:
           type: string
-          description: The error code that is unique to the error type. This can be
-            used to identify the error type and can be used for debugging.
         errors:
           type: array
           items:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/ErrorEnvelope'
         message:
           type: string
-          description: The error message that is human readable and can be used to
-            understand the error. Usually fit to be displayed to the user.
       required:
       - code
       - errors
@@ -2243,9 +2592,6 @@ components:
         id:
           type: string
           readOnly: true
-        resume_section:
-          type: string
-          readOnly: true
         institution_name:
           type: string
           description: The name of the institution the user studied at.
@@ -2306,6 +2652,10 @@ components:
         user:
           type: string
           description: The user who the education entry belongs to.
+        resume_section:
+          type: string
+          format: uuid
+          description: The resume section the education entry belongs to.
         country:
           type: string
           description: The country the institution is located in. (optional)
@@ -2666,7 +3016,8 @@ components:
           items:
             $ref: '#/components/schemas/Skill'
         resume_section:
-          $ref: '#/components/schemas/ResumeSectionShort'
+          type: string
+          readOnly: true
         category:
           type: string
           nullable: true
@@ -2868,34 +3219,56 @@ components:
         sections:
           type: string
           readOnly: true
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
       required:
       - id
       - job
       - sections
       - status
       - user
-    ResumeSectionShort:
+    ResumeReplace:
       type: object
+      description: Serializer for replacing an entire resume's sections in one request.
       properties:
-        id:
-          type: string
-          readOnly: true
-        resume:
-          type: string
-          description: The resume the section belongs to.
-        index:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          description: The index of the section in the resume. This number determines
-            the position of the section in the resume. (0-based)
-        type:
-          type: string
-          readOnly: true
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResumeReplaceSection'
+          description: Ordered list of sections that will fully replace the resume's
+            sections
+          minItems: 1
       required:
-      - id
-      - index
-      - resume
+      - sections
+    ResumeReplaceSection:
+      type: object
+      description: |-
+        Incoming section payload for replacing a resume.
+        This is intentionally permissive on the nested data to allow clients
+        to send the same structure produced by tailoring callbacks.
+      properties:
+        type:
+          enum:
+          - Skill
+          - Experience
+          - Education
+          - Project
+          - Certification
+          type: string
+          description: |-
+            * `Skill` - Skill
+            * `Experience` - Experience
+            * `Education` - Education
+            * `Project` - Project
+            * `Certification` - Certification
+          x-spec-enum-id: 707a2269f413cecf
+        data:
+          type: object
+          additionalProperties: {}
+      required:
       - type
     ResumeShort:
       type: object
@@ -2918,6 +3291,11 @@ components:
         status:
           type: string
           readOnly: true
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
       required:
       - id
       - job
@@ -3006,6 +3384,17 @@ components:
       - id
       - name
       - updated_at
+    TailorRequest:
+      type: object
+      description: |-
+        Request body for starting the resume tailoring process.
+        Provide either a job URL or a sufficiently long job description.
+      properties:
+        target:
+          type: string
+          description: Job URL or long job description to tailor the resume against.
+      required:
+      - target
     User:
       type: object
       properties:
@@ -3146,6 +3535,18 @@ components:
       required:
       - has_access
       - waitlist_ids
+    WaitlistBulkUpdateResponse:
+      type: object
+      properties:
+        updated_count:
+          type: integer
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Waitlist'
+      required:
+      - entries
+      - updated_count
     WaitlistUpdate:
       type: object
       properties:
@@ -3163,6 +3564,8 @@ components:
 servers:
 - url: https://api.letraz.app/api/v1
   description: Production Server
+- url: http://localhost:8000/api/v1
+  description: Local Development Server
 tags:
 - name: Core APIs
   description: Core APIs for Letraz Backend
@@ -3183,16 +3586,3 @@ tags:
 - name: Experience object
   description: Manage experience objects, retrieve experience objects and everything
     related to experience objects
-- name: Project object
-  description: Manage project objects, retrieve project objects and everything related
-    to project objects
-- name: Skill object
-  description: Manage skill objects, retrieve skill objects and everything related
-    to skill objects
-- name: Certification object
-  description: Manage certification objects, retrieve certification objects and everything
-    related to certification objects
-- name: Admin - Resume
-  description: '[ADMIN] Administrative operations for resume management'
-- name: Admin - Waitlist
-  description: '[ADMIN] Administrative operations for waitlist management'

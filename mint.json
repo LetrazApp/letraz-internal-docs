@@ -97,6 +97,7 @@
             "api-reference/resume-object/get-all-resume",
             "api-reference/resume-object/get-resume-by-id",
             "api-reference/resume-object/rearrange-resume-sections",
+            "api-reference/resume-object/replace-resume-sections",
             "api-reference/resume-object/start-resume-tailoring-process"
           ]
         },
