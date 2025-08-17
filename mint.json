@@ -99,7 +99,7 @@
             "api-reference/resume-object/rearrange-resume-sections",
             "api-reference/resume-object/replace-resume-sections",
             "api-reference/resume-object/start-resume-tailoring-process",
-            "api-reference/resume-object/start-resume-tailoring-process"
+            "api-reference/certification-object/export-a-resume"
           ]
         },
         {
@@ -109,7 +109,7 @@
             "api-reference/certification-object/create-a-new-certification",
             "api-reference/certification-object/get-certification-by-id",
             "api-reference/certification-object/update-a-certification",
-            "api-reference/certification-object/export-a-resume"
+            "api-reference/certification-object/delete-a-certification"
           ]
         },
         {
